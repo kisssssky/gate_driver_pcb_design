@@ -2,6 +2,10 @@
 
 本文件是本项目的主进度控制文件。每当项目出现实质性的设计、验证、仿真、原理图、PCB、调试或实验进展时，都应同步更新本文件中的阶段状态和通过证据。
 
+## 项目级输出归档规则
+
+每个项目聊天产生的用户可交付输出文件必须按 [`docs/output_sync_policy.md`](output_sync_policy.md) 保存到 GitHub，并更新 [`docs/chat_output_index.md`](chat_output_index.md)。未完成同步时不得把该输出标记为正式完成。
+
 ## 项目最终成功标准
 本项目不是“原理图画完”或“DRC通过”就算成功，也不是只要Si8273输出边沿小于100 ns就算成功。最终目标是功能复现 Li et al., IEEE TPEL 2024 Fig. 3：DUT能够完成 `0 V预处理 → stress → measurement`，并在stress结束后约100 ns内获得可解释、可重复的VDS测量点，用于后续MI/MP/MN和ΔVth提取。
 
@@ -59,6 +63,7 @@ ChatGPT、论文、datasheet、GitHub文档。
 ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Codex只负责在批准后维护文档。
 ### 必须产出
 - `docs/requirements.md`
+- `docs/SP1_paper_method_system_requirements_v0.1.md`
 - 状态表
 - 时序定义
 - 初版验证矩阵
@@ -71,7 +76,7 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - 系统级约100 ns测量目标被明确定义；
 - 所有未解决问题明确列出，不靠猜测补全。
 ### 当前状态
-**ACTIVE**
+**ACTIVE** — SP1-v0.1已完成并同步，36条需求与验证矩阵已建立；仍需Master冻结tdly、VDS/IDM容差、tpre/tmea、measurement-point算法和安全基线。
 
 ---
 
@@ -449,4 +454,5 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 2. 在该Gate下补充通过证据或未通过原因；
 3. 同步更新`docs/project_status.md`；
 4. 只有满足PASS标准后，才能把状态改成`PASS`；
-5. 任何关键假设都必须有来源：论文、datasheet、计算或明确标注的工程假设。
+5. 任何关键假设都必须有来源：论文、datasheet、计算或明确标注的工程假设；
+6. 每个聊天产生的输出文件保存到GitHub并更新`docs/chat_output_index.md`。
