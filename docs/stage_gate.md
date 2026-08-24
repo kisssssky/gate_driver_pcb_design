@@ -1,705 +1,452 @@
-# PCB Design Stage-Gate Plan
+# PCB 设计阶段门（Stage-Gate）总计划
 
-This file is the master stage-gate tracker for the SiC MOSFET BTI Fig. 3 reproduction PCB project. It must be updated whenever the project makes a meaningful design, verification, or implementation advance.
+本文件是本项目的主进度控制文件。每当项目出现实质性的设计、验证、仿真、原理图、PCB、调试或实验进展时，都应同步更新本文件中的阶段状态和通过证据。
 
-## Project success criterion
-The PCB is not considered successful merely because the schematic is complete, DRC passes, or the Si8273 output edge is fast. The end goal is to reproduce the functional measurement architecture of Fig. 3 in Li et al., IEEE TPEL 2024, such that the DUT can move through precondition → stress → measurement states and an interpretable VDS measurement point can be obtained about 100 ns after stress removal.
+## 项目最终成功标准
+本项目不是“原理图画完”或“DRC通过”就算成功，也不是只要Si8273输出边沿小于100 ns就算成功。最终目标是功能复现 Li et al., IEEE TPEL 2024 Fig. 3：DUT能够完成 `0 V预处理 → stress → measurement`，并在stress结束后约100 ns内获得可解释、可重复的VDS测量点，用于后续MI/MP/MN和ΔVth提取。
 
-## AI / human responsibility model
+## 人与AI的职责划分
 
-### Human owner
-The human designer retains final responsibility for:
-- final component selection approval;
-- physical package and pin-1 confirmation;
-- critical component placement;
-- critical high-speed routing and Kelvin routing;
-- laboratory grounding / floating-supply verification;
-- probe connection and measurement safety;
-- hardware bring-up;
-- final ERC/DRC disposition;
-- manufacturing approval and Gerber release.
+### 你（最终负责人）必须亲自确认
+- 最终器件选型；
+- 实物封装和Pin 1方向；
+- 关键器件placement；
+- 关键高速走线和Kelvin Source走线；
+- 实验室电源是否真正浮地/隔离；
+- 示波器探头和接地方式；
+- 实物上电调试；
+- ERC/DRC警告最终处置；
+- Gerber/生产文件最终批准。
 
-### ChatGPT
-Use ChatGPT mainly for:
-- paper and datasheet interpretation;
-- requirements and architecture;
-- circuit reasoning and calculations;
-- schematic review;
-- PCB screenshot / layout review;
-- failure-mode analysis;
-- bring-up and validation planning;
-- debugging and experiment-method review.
+### ChatGPT主要负责
+- 论文和datasheet解释；
+- 系统需求和架构；
+- 电路原理推理与计算；
+- LTspice建模思路；
+- 原理图review；
+- PCB截图、placement、routing review；
+- 故障模式和安全风险分析；
+- bring-up与验证计划；
+- 波形和实验方法分析。
 
-### Codex
-Use Codex mainly for:
-- repository and engineering-file maintenance;
-- deterministic KiCad file edits after interfaces are approved;
-- BOM generation and consistency checks;
-- ERC/DRC automation and report generation;
-- calculation scripts;
-- oscilloscope/B1505 CSV processing;
-- version control and change summaries.
+### Codex主要负责
+- GitHub与工程文件维护；
+- 在接口已经冻结后执行确定性的KiCad文件修改；
+- BOM生成与一致性检查；
+- ERC/DRC自动化与报告；
+- 计算脚本；
+- 示波器/B1505 CSV自动处理；
+- 版本控制和变更摘要。
 
-Codex must not independently invent component pin numbers, ratings, frozen interfaces, safety behavior, or high-speed topology.
+Codex不得自行猜测器件引脚、额定值、冻结接口、安全行为或高速拓扑。
 
 ---
 
-# Stage Gates
+# 阶段门
 
-## G0 — Requirements Definition
-
-### Purpose
-Define exactly what the PCB must do before drawing the circuit.
-
-### Learn / understand
-- system input and output quantities;
-- voltage, current, timing, and measurement requirements;
-- positive-BTI and negative-BTI operating modes;
-- meaning of SREF, GNDA, GNDI, and laboratory earth;
-- precondition, stress, measurement, and safe-off states.
-
-### Main tools
-- ChatGPT
-- paper / datasheets
-- GitHub documentation
-
-### AI tasks
-ChatGPT:
-- extract requirements from the paper;
-- define states and timing;
-- identify assumptions and unknowns;
-- convert requirements to REQ-xxx items.
-
-Codex:
-- maintain requirements documents only after content is approved.
-
-### Required outputs
+## G0 — 需求定义
+### 目标
+在画电路前，明确PCB到底必须实现什么。
+### 需要理解
+- 输入、输出、控制和测量量；
+- 电压、电流、时间和测量要求；
+- 正BTI与负BTI模式；
+- SREF、GNDA、GNDI、实验室earth之间的区别；
+- PRECONDITION、STRESS、MEASUREMENT、SAFE-OFF状态。
+### 主要工具
+ChatGPT、论文、datasheet、GitHub文档。
+### AI负责
+ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Codex只负责在批准后维护文档。
+### 必须产出
 - `docs/requirements.md`
-- state table
-- timing definitions
-- initial verification matrix
-- open-question list
-
-### PASS criteria
-- every required board function has a REQ identifier;
-- positive and negative BTI operation is unambiguous;
-- 0 V precondition is represented;
-- SREF definition is frozen;
-- the ~100 ns system-level measurement target is defined;
-- unresolved items are explicitly listed rather than guessed.
-
-### Current status
-ACTIVE
+- 状态表
+- 时序定义
+- 初版验证矩阵
+- 未解决问题清单
+### PASS标准
+- 所有必要功能有REQ编号；
+- 正/负BTI逻辑无歧义；
+- 0 V预处理已被纳入；
+- SREF定义冻结；
+- 系统级约100 ns测量目标被明确定义；
+- 所有未解决问题明确列出，不靠猜测补全。
+### 当前状态
+**ACTIVE**
 
 ---
 
-## G1 — System Architecture
-
-### Purpose
-Split the complete experiment into functional blocks and define interfaces before selecting detailed circuits.
-
-### Learn / understand
-For each block, identify:
-- signal path;
-- power path;
-- return path;
-- voltage reference;
-- control input;
-- measurement output.
-
-### Expected architecture blocks
-- pulse-generator / logic input;
-- Si8273 isolated gate-driver section;
-- stress-to-measurement switching;
-- 0 V precondition function;
-- DUT gate / Kelvin-source interface;
-- VDC + RL drain-load loop;
-- VGS/VDS measurement interfaces;
-- B1505 calibration interface / workflow.
-
-### Main tools
-- ChatGPT
-- GitHub documentation
-
-### AI tasks
-ChatGPT:
-- create and review block diagrams;
-- define electrical interfaces;
-- identify isolation and grounding risks.
-
-Codex:
-- maintain interface tables and architecture documents.
-
-### Required outputs
-- approved block diagram;
-- `docs/interfaces.md` updated;
-- state-to-hardware mapping;
-- module ownership and boundaries.
-
-### PASS criteria
-- every connector and major net has a defined purpose;
-- current return paths are understandable;
-- GNDI, GNDA, SREF, and earth are not ambiguously merged;
-- the boundary between PCB functions and external instruments is clear;
-- SP2 and SP3 can proceed without inventing system-level interfaces.
-
-### Current status
-ACTIVE
+## G1 — 系统架构
+### 目标
+把完整实验拆成模块，并在选具体电路之前定义模块接口。
+### 每个模块必须能回答
+- 信号从哪里来、到哪里去；
+- 电源从哪里来；
+- 电流从哪里返回；
+- 参考点是谁；
+- 控制输入是什么；
+- 测量输出是什么。
+### 预期模块
+- Pulse Generator / 逻辑输入；
+- Si8273隔离栅极驱动；
+- stress→measurement高速切换；
+- 0 V precondition；
+- DUT Gate / Kelvin Source接口；
+- VDC + RL漏极负载回路；
+- VGS/VDS测量接口；
+- B1505校准流程。
+### 主要工具
+ChatGPT、GitHub文档。
+### PASS标准
+- 每个连接器和主要net用途明确；
+- 关键电流回路可以解释；
+- GNDI、GNDA、SREF、earth没有被模糊合并；
+- PCB负责什么、外部仪器负责什么已经划清；
+- SP2和SP3无需猜系统接口即可继续。
+### 当前状态
+**ACTIVE**
 
 ---
 
-## G2 — Component Selection and Circuit Calculations
-
-### Purpose
-Prove that the proposed hardware is electrically plausible before schematic capture is frozen.
-
-### Learn / understand
-- datasheet reading;
-- voltage/current ratings;
-- Qg and gate-current requirements;
-- Rg effects;
-- decoupling requirements;
-- RL, IDS, resistor pulse power, and DUT self-heating;
-- timing and bandwidth margins;
-- power-up, power-down, EN, and UVLO behavior.
-
-### Main tools
-- ChatGPT
-- LTspice
-- Python / calculation scripts
-- manufacturer datasheets
-
-### AI tasks
-ChatGPT:
-- datasheet review;
-- component comparison;
-- circuit calculations;
-- failure-mode analysis;
-- LTspice model simplification guidance.
-
-Codex:
-- parameter-sweep scripts;
-- BOM drafts;
-- calculation automation;
-- datasheet-reference consistency checks.
-
-### Human tasks
-- approve exact orderable part numbers;
-- verify physical parts and available laboratory supplies/instruments;
-- confirm no critical value is based on an AI guess.
-
-### Required outputs
-- approved Si8273 part/package;
-- gate-drive current calculation;
-- initial Rg range;
-- decoupling specification;
-- 0 V precondition topology decision;
-- VDC/RL calculation method;
-- component-rating table;
-- LTspice results for relevant simplified circuits where useful.
-
-### PASS criteria
-- all critical components have cited datasheet support;
-- voltage/current/power margins are checked;
-- the target transition is quantitatively plausible;
-- negative-BTI fail-state risk is addressed;
-- no critical OPEN item prevents schematic implementation.
-
-### Current status
-NOT STARTED / waiting for G0-G1 definitions to stabilize
+## G2 — 器件选型与电路计算
+### 目标
+在冻结原理图前，证明方案在电气上合理。
+### 需要学习
+- datasheet读法；
+- 电压/电流额定值；
+- Qg与栅极驱动电流；
+- Rg对速度和振铃的影响；
+- 去耦；
+- RL、IDS、脉冲功率和DUT自热；
+- 时序与带宽裕量；
+- 上电、掉电、EN、UVLO状态。
+### 主要工具
+ChatGPT、LTspice、Python、厂商datasheet。
+### AI负责
+ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化；Codex做参数扫描、BOM草案和计算脚本。
+### 你负责
+确认准确料号、实物器件、实验室现有电源/仪器，并确认所有关键数值都有来源。
+### 必须产出
+- Si8273准确料号和封装；
+- 栅极驱动电流计算；
+- 初始Rg范围；
+- 去耦规格；
+- 0 V precondition拓扑决定；
+- VDC/RL选择方法；
+- 器件额定值表；
+- 必要的LTspice仿真结果。
+### PASS标准
+- 所有关键器件都有datasheet依据；
+- 电压、电流、功率裕量完成检查；
+- 目标切换速度有定量依据；
+- 负BTI默认状态风险得到处理；
+- 没有阻止原理图实现的关键OPEN问题。
+### 当前状态
+**NOT STARTED / 等待G0-G1进一步稳定**
 
 ---
 
-## G3 — Schematic Capture
-
-### Purpose
-Create the complete electrical connectivity in KiCad.
-
-### Learn / understand
-- symbols versus physical components;
-- pins and nets;
-- power symbols and references;
-- decoupling;
-- connectors;
-- no-connect and unused-pin handling;
-- ERC.
-
-### Main tools
-- KiCad Schematic Editor
-- ChatGPT
-- Codex
-
-### AI tasks
-ChatGPT:
-- module-by-module schematic design and review;
-- pin-by-pin review from datasheets;
-- screenshot review;
-- identify grounding, isolation, and default-state errors.
-
-Codex:
-- deterministic KiCad edits from an approved connection specification;
-- BOM/net consistency checks;
-- ERC execution and report generation.
-
-### Human tasks
-- open and inspect the schematic visually;
-- verify every critical pin against the datasheet;
-- approve all ERC warning dispositions.
-
-### Required outputs
-- KiCad schematic;
-- BOM draft;
-- ERC report;
-- schematic review checklist.
-
-### PASS criteria
-- no unresolved serious ERC errors;
-- every critical IC pin manually checked;
-- no floating control inputs;
-- GNDI/GNDA/SREF/earth relationships are correct;
-- positive and negative BTI modes follow the frozen interface table;
-- 0 V precondition does not conflict with the Si8273 output.
-
-### Current status
-BLOCKED until G0-G2 pass
+## G3 — KiCad原理图
+### 目标
+把完整电气连接关系正式画入KiCad。
+### 需要学习
+- Symbol与真实器件的区别；
+- Pin与Net；
+- 电源符号与参考点；
+- 去耦；
+- Connector；
+- 未使用引脚处理；
+- ERC。
+### 主要工具
+KiCad Schematic Editor、ChatGPT、Codex。
+### AI负责
+ChatGPT逐模块设计和逐pin review；Codex按已批准连接表修改KiCad、跑ERC和生成报告。
+### 你负责
+视觉检查原理图、对照datasheet核对关键pin、批准所有ERC warning。
+### PASS标准
+- 无未解决严重ERC；
+- 关键IC逐pin人工核对；
+- 无悬空控制输入；
+- GNDI/GNDA/SREF/earth关系正确；
+- 正负BTI满足冻结的接口表；
+- 0 V precondition不与Si8273输出冲突。
+### 当前状态
+**BLOCKED，直到G0-G2通过**
 
 ---
 
-## G4 — Footprint and Physical-Part Verification
-
-### Purpose
-Map every schematic component to the correct physical package and pad numbering.
-
-### Learn / understand
-- symbol pin number versus footprint pad number;
-- package variants;
-- pin 1 orientation;
-- mechanical drawings;
-- connector orientation;
-- polarity markings.
-
-### Main tools
-- KiCad
-- manufacturer datasheets
-- ChatGPT
-- Codex
-
-### AI tasks
-ChatGPT:
-- mechanical drawing review;
-- package-variant comparison.
-
-Codex:
-- detect missing footprints;
-- generate footprint audit lists.
-
-### Human tasks
-- final physical-package confirmation;
-- pin-1 and connector-orientation confirmation.
-
-### Required outputs
-- footprint assignment table;
-- footprint audit;
-- package-orientation checklist.
-
-### PASS criteria
-- 100% of PCB-mounted components have verified footprints;
-- symbol-pin to footprint-pad mapping is correct;
-- no package selection is based on name similarity alone;
-- connector polarity/orientation is explicitly reviewed.
-
-### Current status
-BLOCKED until G3 pass
+## G4 — Footprint与实物封装核对
+### 目标
+把每个原理图器件映射到正确的真实焊盘与机械封装。
+### 需要学习
+- Symbol pin号与Footprint pad号；
+- 同名封装的不同变体；
+- Pin 1方向；
+- 机械尺寸图；
+- Connector方向和极性。
+### AI负责
+ChatGPT检查机械图和封装变体；Codex检查缺失footprint并生成审计表。
+### 你负责
+最终确认实物封装、Pin 1和Connector方向。
+### PASS标准
+- 100%板载器件有已验证footprint；
+- Symbol pin到pad映射正确；
+- 不根据“名字看起来像”选封装；
+- Connector极性和方向已人工review。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G5 — PCB Constraints and Board Setup
-
-### Purpose
-Define layout rules before placement and routing.
-
-### Learn / understand
-- board stackup;
-- copper layers;
-- trace width;
-- clearance;
-- vias;
-- net classes;
-- isolation boundary;
-- current return paths.
-
-### Suggested net classes / functional groups
-- LOGIC
-- GATE_FAST
-- FLOATING_POWER
-- DRAIN_POWER
-- SENSE
-
-### Main tools
-- KiCad PCB Editor
-- KiCad Calculator / Python where useful
-- ChatGPT
-- Codex
-
-### AI tasks
-ChatGPT:
-- recommend rule principles based on actual current, voltage, and switching requirements.
-
-Codex:
-- implement approved net classes and design rules;
-- check rule consistency.
-
-### PASS criteria
-- board stackup is defined;
-- all important net classes are assigned;
-- clearance and width rules are justified;
-- isolation region is defined;
-- placement begins only after rules exist.
-
-### Current status
-BLOCKED
+## G5 — PCB规则与板级设置
+### 目标
+在placement和routing之前先定义设计规则。
+### 需要学习
+- 层叠；
+- 铜层；
+- 线宽；
+- clearance；
+- via；
+- net class；
+- 隔离区；
+- return path。
+### 建议功能组
+`LOGIC`、`GATE_FAST`、`FLOATING_POWER`、`DRAIN_POWER`、`SENSE`。
+### AI负责
+ChatGPT根据实际电压、电流、速度提出规则原则；Codex实现已批准的net class和规则。
+### PASS标准
+- stackup确定；
+- 重要net class全部分配；
+- 线宽和间距有理由；
+- 隔离区域确定；
+- 规则存在后才开始placement。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G6 — Critical Placement
-
-### Purpose
-Place components to minimize parasitic inductance and create correct physical current-return paths.
-
-### Priority placement group
-First place only the critical gate-drive island:
-- Si8273;
-- VDDA-GNDA 100 nF decoupling;
-- other local decoupling;
-- Rg;
-- DUT Gate connector;
-- DUT Kelvin Source connector.
-
-Then add slower/control/power components.
-
-### Learn / understand
-- loop area;
-- parasitic inductance;
-- decoupling-loop geometry;
-- Kelvin routing;
-- probe access;
-- connector practicality.
-
-### Main tools
-- KiCad PCB Editor
-- ChatGPT screenshot review
-
-### AI tasks
-ChatGPT:
-- review placement screenshots for loop geometry, return path, isolation, and probe access.
-
-Codex:
-- only deterministic placement changes when explicitly specified;
-- not responsible for independent high-speed placement decisions.
-
-### Human tasks
-- perform/approve critical placement.
-
-### PASS criteria
-- VOA → Rg → Gate → Kelvin Source → GNDA loop is physically compact;
-- high-frequency VDDA-GNDA decoupling is adjacent to driver supply pins;
-- Kelvin and power-source paths are physically distinguishable;
-- measurement probes can realistically connect;
-- isolation and connector placement are practical.
-
-### Current status
-BLOCKED
+## G6 — 关键器件Placement
+### 目标
+通过物理摆放降低寄生电感并建立正确回流路径。
+### 第一轮只优先放
+- Si8273；
+- VDDA-GNDA 100 nF；
+- 其他本地去耦；
+- Rg；
+- DUT Gate connector；
+- DUT Kelvin Source connector。
+### 需要学习
+- loop area；
+- parasitic inductance；
+- 去耦回路几何；
+- Kelvin routing；
+- probe access；
+- connector可操作性。
+### AI负责
+ChatGPT根据PCB截图review回路、回流、隔离和探头空间；Codex只做明确指定的坐标/批量修改。
+### 你负责
+关键器件的placement和最终批准。
+### PASS标准
+- `VOA → Rg → Gate → Kelvin Source → GNDA`物理回路紧凑；
+- 高频去耦紧贴驱动器供电pin；
+- Kelvin与功率Source物理上可区分；
+- 探头实际能够接入；
+- 隔离和Connector布局合理。
+### 当前状态
+**BLOCKED**
 
 ---
 
 ## G7 — Routing
-
-### Purpose
-Route the board in electrical-priority order rather than convenience order.
-
-### Routing priority
+### 目标
+按电气重要性顺序走线，而不是按“哪里好走”来走。
+### 路由优先级
 1. VOA → Rg → DUT Gate
 2. Kelvin Source → driver return
-3. high-frequency driver decoupling loop
-4. VGS/VDS sense connections
-5. power paths
-6. logic paths
-7. non-critical routing
-
-### Learn / understand
-- return paths;
-- copper-plane continuity;
-- via inductance;
-- Kelvin sensing;
-- high-current versus measurement paths.
-
-### Main tools
-- KiCad PCB Editor
-- ChatGPT screenshot review
-- Codex for rule checks / deterministic edits
-
-### Human tasks
-The human designer must perform or explicitly approve critical high-speed and Kelvin routing.
-
-### PASS criteria
-- critical loops are reviewed before non-critical routing is allowed to constrain them;
-- no drain/power current shares the intended Kelvin sense path;
-- no obvious discontinuous return path exists;
-- routing respects all approved rules.
-
-### Current status
-BLOCKED
+3. 高频驱动去耦回路
+4. VGS/VDS sense
+5. Power
+6. Logic
+7. 非关键线
+### 需要学习
+- return path；
+- ground/copper plane连续性；
+- via电感；
+- Kelvin sensing；
+- 功率回路与测量回路分离。
+### AI负责
+ChatGPT逐段截图review；Codex做规则检查和明确的机械修改。
+### 你负责
+关键高速与Kelvin routing。
+### PASS标准
+- 关键回路先完成并通过review；
+- Drain/Power current不共用Kelvin sense路径；
+- 没有明显断裂的return path；
+- 所有routing满足批准规则。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G8 — ERC / DRC / Engineering Design Review
-
-### Purpose
-Combine machine-rule checking with engineering review.
-
-### Important distinction
-ERC/DRC passing only proves that defined CAD rules are satisfied. It does not prove that the gate loop is short, Kelvin routing is correct, decoupling is effective, or SREF is safely referenced.
-
-### Main tools
-- KiCad ERC/DRC
-- ChatGPT
-- Codex
-
-### AI tasks
-Codex:
-- run ERC/DRC;
-- collect warnings;
-- generate reports;
-- check BOM/footprint/net consistency.
-
-ChatGPT:
-- engineering review of schematic and PCB screenshots;
-- review unresolved warnings and risk items.
-
-### Human tasks
-- final disposition of every warning;
-- final visual inspection.
-
-### PASS criteria
-- zero unresolved serious ERC errors;
-- zero unresolved serious DRC errors;
-- every warning has a documented disposition;
-- schematic, placement, routing, measurement access, isolation, and safety reviews pass.
-
-### Current status
-BLOCKED
+## G8 — ERC / DRC / 工程审核
+### 目标
+把机器规则检查和工程判断结合起来。
+### 重要原则
+ERC/DRC通过只能证明“符合已经写入CAD的规则”，不能证明Gate loop短、Kelvin正确、去耦有效或SREF安全。
+### AI负责
+Codex跑ERC/DRC、收集warning、检查BOM/footprint/net一致性；ChatGPT做系统级工程review。
+### 你负责
+所有warning最终处置和完整视觉检查。
+### PASS标准
+- 0个未解决严重ERC；
+- 0个未解决严重DRC；
+- 每个warning都有记录；
+- 原理图、placement、routing、测量接口、隔离和安全review通过。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G9 — Manufacturing Release
-
-### Purpose
-Generate fabrication/assembly outputs only after design review passes.
-
-### Main tools
-- KiCad
-- Codex for deterministic export/check automation
-
-### Required outputs
-- Gerbers;
-- drill files;
-- BOM;
-- position files if assembly is required;
-- fabrication notes;
-- release checklist.
-
-### Human-only approval
-Manufacturing release requires explicit human approval.
-
-### PASS criteria
-- G8 passed;
-- manufacturing checklist passed;
-- polarity/orientation and board dimensions checked;
-- final generated files independently inspected.
-
-### Current status
-BLOCKED
+## G9 — 制造发布
+### 目标
+只有设计审核通过后才生成正式制造文件。
+### 主要输出
+- Gerber；
+- Drill；
+- BOM；
+- Position files（如需要装配）；
+- Fabrication notes；
+- Release checklist。
+### 规则
+生产发布必须由你明确批准。
+### PASS标准
+- G8通过；
+- 制造checklist通过；
+- 极性、方向、板框尺寸检查完成；
+- 最终输出文件再次独立检查。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G10 — Hardware Bring-Up
-
-### Purpose
-Power the prototype in controlled stages without risking the DUT unnecessarily.
-
-### Bring-up order
-1. visual / microscope inspection;
-2. unpowered resistance and short checks;
-3. logic supply only;
-4. driver supply without DUT high-voltage operation;
-5. dummy gate capacitor tests;
-6. positive and negative gate-transition tests;
-7. DUT connected with VDC = 0;
-8. low VDC + conservative RL;
-9. progression toward final test conditions.
-
-### Main tools
-- DMM
-- current-limited supplies
-- oscilloscope / differential probes
-- pulse generator
-- ChatGPT for test planning and debugging
-- Codex for data logging/analysis
-
-### PASS criteria
-- every staged test passes before progressing;
-- no unexpected rail short or grounding path;
-- positive/negative gate transitions are correct;
-- no unsafe VGS overshoot;
-- fail states and power sequencing behave as designed.
-
-### Current status
-BLOCKED
+## G10 — 实物Bring-up
+### 目标
+以受控步骤第一次给PCB上电，避免直接损坏DUT。
+### 建议顺序
+1. 目检/显微镜检查；
+2. 断电电阻与短路检查；
+3. 只上逻辑电源；
+4. 上driver电源但不进行DUT高压运行；
+5. Dummy gate capacitor测试；
+6. 正/负栅极切换测试；
+7. 接DUT但`VDC=0`；
+8. 低VDC + 保守RL；
+9. 逐步接近正式实验条件。
+### 主要工具
+万用表、限流电源、示波器/差分探头、Pulse Generator、ChatGPT、Codex。
+### PASS标准
+- 每一级通过后才进入下一级；
+- 无异常短路或意外ground路径；
+- 正/负栅极切换正确；
+- 无不安全VGS过冲；
+- fail state与power sequence符合设计。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G11 — Fast-Switching and Measurement Validation
-
-### Purpose
-Prove the PCB meets the actual Fig. 3 timing objective.
-
-### Measurements
-At minimum capture:
-- VIA or equivalent control edge;
-- VGS referenced to Kelvin Source;
-- VDS.
-
-Evaluate:
-- transition time;
-- overshoot;
-- ringing;
-- settling;
-- stress-end timestamp;
-- VDS measurement point timestamp;
-- tdly;
-- repeatability.
-
-### Main tools
-- oscilloscope
-- Python
-- Codex data-analysis scripts
-- ChatGPT waveform review
-
-### PASS criteria
-- VGS remains within approved DUT limits;
-- measurement voltage is reached reproducibly;
-- MP/MN/MI measurement behavior is interpretable;
-- stress removal → valid VDS measurement point is approximately 100 ns or otherwise meets the approved timing requirement;
-- result is repeatable across repeated acquisitions.
-
-### Current status
-BLOCKED
+## G11 — 高速切换与测量验证
+### 目标
+证明PCB真正满足Fig. 3要求，而不仅是“能切换”。
+### 至少测量
+- VIA或等效控制边沿；
+- 相对Kelvin Source的VGS；
+- VDS。
+### 评估
+- transition time；
+- overshoot；
+- ringing；
+- settling；
+- stress结束时刻；
+- VDS有效测量点时刻；
+- tdly；
+- repeatability。
+### PASS标准
+- VGS始终在DUT允许范围；
+- measurement voltage可重复到达；
+- MI/MP/MN行为可解释；
+- stress removal → valid VDS point约100 ns，或满足最终批准的时序指标；
+- 多次采集结果可重复。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G12 — Fig. 3 Experimental Reproduction
+## G12 — Fig. 3完整实验复现
+### 目标
+执行完整论文方法，而不仅验证PCB波形。
+### 三类测试
+**Calibration**：`0 V → VGM-I → MI`
 
-### Purpose
-Run the complete method rather than only proving that the PCB switches.
+**Positive stress**：`0 V → VGS-P → VGM-P → MP`
 
-### Required test sequences
-Calibration:
-- 0 V → VGM-I → measure MI.
+**Negative stress**：`0 V → VGS-N → VGM-N → MN`
 
-Positive stress:
-- 0 V → VGS-P → VGM-P → measure MP.
-
-Negative stress:
-- 0 V → VGS-N → VGM-N → measure MN.
-
-Combine the fast VDS measurement with the B1505 fixed-VDS IDS-VGS calibration to derive the threshold-voltage shift according to the approved analysis method.
-
-### Main tools
-- PCB test platform
-- B1505 / EasyEXPERT
-- pulse generator
-- oscilloscope
-- Python
-- ChatGPT
-- Codex
-
-### PASS criteria
-- calibration workflow passes;
-- positive and negative stress workflows pass on the same PCB;
-- VGM-P and VGM-N can be adjusted as required without hardware modification;
-- MI, MP, MN and tdly are extracted reliably;
-- ΔVth calculation pipeline is validated;
-- test results are reproducible.
-
-### Current status
-BLOCKED
+然后将高速VDS测量与B1505固定VDS的IDS-VGS基准曲线结合，按批准的数据流程得到ΔVth。
+### 主要工具
+自制PCB、B1505/EasyEXPERT、Pulse Generator、示波器、Python、ChatGPT、Codex。
+### PASS标准
+- calibration通过；
+- 同一块PCB完成正/负stress；
+- VGM-P、VGM-N可通过外部设置调整，无需换PCB元件；
+- MI、MP、MN和tdly可靠提取；
+- ΔVth计算链路验证；
+- 实验结果可重复。
+### 当前状态
+**BLOCKED**
 
 ---
 
-## G13 — Revision / V2 Decision
-
-### Purpose
-Convert prototype observations into controlled design changes.
-
-### Required process
-Every hardware problem must be mapped to:
-- observed symptom;
-- evidence;
-- root-cause hypothesis;
-- validation test;
-- design change;
-- regression test.
-
-### AI use
-ChatGPT:
-- root-cause reasoning and design-review support.
-
-Codex:
-- change implementation, versioning, automated regression/reporting.
-
-### PASS criteria
-- all V1 critical issues have documented dispositions;
-- V2 changes are traceable to measured evidence;
-- no unreviewed change is introduced.
-
-### Current status
-BLOCKED
+## G13 — V2改版决定
+### 目标
+把V1实测问题转化成受控的V2修改，而不是凭感觉改板。
+### 每个问题都必须记录
+- 现象；
+- 证据；
+- 根因假设；
+- 验证测试；
+- 设计修改；
+- 回归测试。
+### AI负责
+ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性修改和版本diff。
+### PASS标准
+- 每项V2修改都有证据来源；
+- 不引入无关改动；
+- 修改后对应回归测试明确。
+### 当前状态
+**BLOCKED**
 
 ---
 
-# Current Master Gate Summary
+# 当前总进度
+- G0 需求定义：**ACTIVE**
+- G1 系统架构：**ACTIVE**
+- G2 器件选型与计算：**NOT STARTED**
+- G3 原理图：**BLOCKED**
+- G4 Footprint：**BLOCKED**
+- G5 PCB规则：**BLOCKED**
+- G6 Placement：**BLOCKED**
+- G7 Routing：**BLOCKED**
+- G8 ERC/DRC/工程审核：**BLOCKED**
+- G9 制造发布：**BLOCKED**
+- G10 Bring-up：**BLOCKED**
+- G11 高速验证：**BLOCKED**
+- G12 Fig. 3实验复现：**BLOCKED**
+- G13 V2改版：**BLOCKED**
 
-| Gate | Name | Status |
-|---|---|---|
-| G0 | Requirements Definition | ACTIVE |
-| G1 | System Architecture | ACTIVE |
-| G2 | Component Selection & Calculations | NOT STARTED |
-| G3 | Schematic Capture | BLOCKED |
-| G4 | Footprint Verification | BLOCKED |
-| G5 | PCB Constraints | BLOCKED |
-| G6 | Placement | BLOCKED |
-| G7 | Routing | BLOCKED |
-| G8 | ERC/DRC & Engineering Review | BLOCKED |
-| G9 | Manufacturing Release | BLOCKED |
-| G10 | Hardware Bring-Up | BLOCKED |
-| G11 | Fast-Switching Validation | BLOCKED |
-| G12 | Fig. 3 Experimental Reproduction | BLOCKED |
-| G13 | Revision / V2 | BLOCKED |
-
-## Update rule
-Whenever a meaningful project advance occurs, update this file before declaring the corresponding stage complete. For each update:
-1. change the relevant gate status;
-2. add or update required outputs;
-3. record newly discovered blockers;
-4. only mark a gate `PASS` when every PASS criterion has explicit evidence;
-5. do not unlock a downstream gate whose upstream prerequisite has not passed.
-
-Allowed status values:
-- NOT STARTED
-- ACTIVE
-- BLOCKED
-- REVIEW
-- PASS
-- REWORK
-
-Last updated: 2026-08-24
+## 更新规则
+每次项目出现实质性进展后：
+1. 更新对应Gate的`当前状态`；
+2. 在该Gate下补充通过证据或未通过原因；
+3. 同步更新`docs/project_status.md`；
+4. 只有满足PASS标准后，才能把状态改成`PASS`；
+5. 任何关键假设都必须有来源：论文、datasheet、计算或明确标注的工程假设。
