@@ -6,6 +6,19 @@ Phase: architecture and requirements definition
 ## Objective
 Reproduce the functional measurement architecture of Fig. 3 in Li et al., IEEE TPEL 2024, with a custom PCB for fast SiC MOSFET BTI stress-to-measurement switching.
 
+## Master stage-gate control
+The detailed PCB development flow, AI/human responsibility split, required deliverables, and PASS criteria are maintained in:
+
+- `docs/stage_gate.md`
+
+Current gate state:
+- G0 Requirements Definition — ACTIVE
+- G1 System Architecture — ACTIVE
+- G2 Component Selection & Calculations — NOT STARTED
+- G3 and later — BLOCKED until upstream gates pass
+
+`docs/stage_gate.md` must be updated whenever the project makes a meaningful design, verification, implementation, or test advance.
+
 ## Completed
 - Repository initialized.
 - Baseline project constraints recorded.
@@ -13,6 +26,7 @@ Reproduce the functional measurement architecture of Fig. 3 in Li et al., IEEE T
 - Initial electrical interfaces created.
 - Initial decision log created.
 - Initial risk register created.
+- Master PCB stage-gate process created.
 
 ## Active subprojects
 - SP1: paper method and system-requirement extraction — ready to start.
@@ -36,4 +50,4 @@ Reproduce the functional measurement architecture of Fig. 3 in Li et al., IEEE T
 6. Exact Si8273 full orderable part number/package to be used on PCB.
 
 ## Next master action
-Complete SP1, SP2, and SP3 design packets before authorizing KiCad schematic implementation.
+Complete G0/G1 through SP1, SP2, and SP3 definition work, then begin G2 component selection and calculations before authorizing KiCad schematic implementation.
