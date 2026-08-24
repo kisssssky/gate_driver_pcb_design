@@ -6,7 +6,7 @@
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
-| 2026-08-24 | SP1 — 论文方法与系统需求 | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.1.md](SP1_paper_method_system_requirements_v0.1.md) | SP1-v0.1 | SYNCED | 已完成变量、状态、时序、36条需求、验证矩阵和HANDOFF；OPEN项尚未冻结 |
+| 2026-08-24 | SP1 — 论文方法与系统需求 | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.1.md](SP1_paper_method_system_requirements_v0.1.md) | SP1-v0.1-r1 | SYNCED | 已修复Markdown/LaTeX符号乱码；技术内容未改变；OPEN项尚未冻结 |
 | 2026-08-24 | Master — 项目治理规则 | 聊天输出文件GitHub同步准则 | [output_sync_policy.md](output_sync_policy.md) | v1.0 | SYNCED | APPROVED PROJECT RULE |
 
 ## 登记规则
