@@ -9,6 +9,8 @@
 ## 项目最终成功标准
 本项目不是“原理图画完”或“DRC通过”就算成功，也不是只要Si8273输出边沿小于100 ns就算成功。最终目标是功能复现 Li et al., IEEE TPEL 2024 Fig. 3：DUT能够完成 `0 V预处理 → stress → measurement`，并在stress结束后约100 ns内获得可解释、可重复的VDS测量点，用于后续MI/MP/MN和ΔVth提取。
 
+项目级通用性目标：同一平台用于650 V-class与3.3 kV-class SiC MOSFET的低VDS BTI / Vth-hysteresis测试。DUT的额定blocking voltage不等于本BTI PCB必须工作在650 V或3.3 kV；实际Drain bias由calibration/measurement条件决定。
+
 ## 人与AI的职责划分
 
 ### 你（最终负责人）必须亲自确认
@@ -65,6 +67,7 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - `docs/requirements.md`
 - `docs/SP1_paper_method_system_requirements_v0.2.md`
 - `docs/SP1_final_gate_review_v1.0.md`
+- `docs/SP1_master_review_v1.0.md`
 - 状态表
 - 时序定义
 - 初版验证矩阵
@@ -77,7 +80,7 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - 系统级约100 ns测量目标被明确定义；
 - 所有未解决问题明确列出，不靠猜测补全。
 ### 当前状态
-**ACTIVE / READY FOR MASTER REVIEW** — SP1 Final Gate Review的A-N全部PASS；SP1交付材料完整，但尚未获得Master批准。仍需Master冻结tdly工程验收、VDS/IDM容差、tpre/tmea、measurement-point算法和安全基线。
+**ACTIVE / SP1 MASTER APPROVED** — `SP1-v0.2 + SP1-FGR-v1.0`已通过Master独立审核，SP1正式关闭。G0本身仍未PASS：还需将SP1的36-ID requirement set正式合并到canonical `docs/requirements.md`，并冻结/分阶段处置`tdly`工程验收、VDS/IDM容差、tpre/tmea、measurement-point算法、安全基线以及650 V/3.3 kV DUT通用接口需求。
 
 ---
 
@@ -107,6 +110,7 @@ ChatGPT、GitHub文档。
 - 关键电流回路可以解释；
 - GNDI、GNDA、SREF、earth没有被模糊合并；
 - PCB负责什么、外部仪器负责什么已经划清；
+- 650 V-class与3.3 kV-class DUT的通用/差异接口边界已定义；
 - SP2和SP3无需猜系统接口即可继续。
 ### 当前状态
 **ACTIVE**
@@ -133,6 +137,7 @@ ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化�
 确认准确料号、实物器件、实验室现有电源/仪器，并确认所有关键数值都有来源。
 ### 必须产出
 - Si8273准确料号和封装；
+- 650 V-class与3.3 kV-class目标DUT的Qg/栅极接口/允许VGS核对；
 - 栅极驱动电流计算；
 - 初始Rg范围；
 - 去耦规格；
@@ -143,11 +148,11 @@ ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化�
 ### PASS标准
 - 所有关键器件都有datasheet依据；
 - 电压、电流、功率裕量完成检查；
-- 目标切换速度有定量依据；
+- 对两类目标DUT的目标切换速度均有定量依据；
 - 负BTI默认状态风险得到处理；
 - 没有阻止原理图实现的关键OPEN问题。
 ### 当前状态
-**NOT STARTED / 等待G0-G1进一步稳定**
+**NOT STARTED / 可开始准备DUT与Si8273 datasheet，等待G0-G1进一步稳定**
 
 ---
 
@@ -434,9 +439,9 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 ---
 
 # 当前总进度
-- G0 需求定义：**ACTIVE**
+- G0 需求定义：**ACTIVE — SP1 MASTER APPROVED；执行canonical requirements合并与项目acceptance收尾**
 - G1 系统架构：**ACTIVE**
-- G2 器件选型与计算：**NOT STARTED**
+- G2 器件选型与计算：**NOT STARTED / 可准备datasheet**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
 - G5 PCB规则：**BLOCKED**
