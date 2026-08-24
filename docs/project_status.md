@@ -1,53 +1,70 @@
-# Project Status
+# 项目状态
 
-Version: v0.1
-Phase: architecture and requirements definition
+版本：v0.1
+当前阶段：需求定义 + 系统架构
 
-## Objective
-Reproduce the functional measurement architecture of Fig. 3 in Li et al., IEEE TPEL 2024, with a custom PCB for fast SiC MOSFET BTI stress-to-measurement switching.
+## 项目目标
+功能复现 Li et al., IEEE TPEL 2024 Fig. 3 的SiC MOSFET快速阈值电压迟滞测试架构。重点不是单独追求Si8273输出边沿小于100 ns，而是让DUT完成`0 V预处理 → stress → measurement`，并在stress结束后约100 ns内获得可解释、可重复的VDS测量点。
 
-## Master stage-gate control
-The detailed PCB development flow, AI/human responsibility split, required deliverables, and PASS criteria are maintained in:
+## 当前已完成
+- GitHub仓库初始化；
+- 建立项目固定约束；
+- 建立初版需求文档；
+- 建立初版接口文档；
+- 建立决策记录；
+- 建立风险登记表；
+- 建立验证矩阵；
+- 建立`docs/stage_gate.md`作为PCB总流程和进度控制文件；
+- 确定人 / ChatGPT / Codex的职责边界；
+- 确定主要软件链：ChatGPT + LTspice + KiCad + GitHub/Codex + Python + B1505/EasyEXPERT。
 
+## 当前Stage-Gate状态
+- G0 需求定义：**ACTIVE**
+- G1 系统架构：**ACTIVE**
+- G2 器件选型与计算：**NOT STARTED**
+- G3 KiCad原理图：**BLOCKED**
+- G4 Footprint验证：**BLOCKED**
+- G5 PCB规则：**BLOCKED**
+- G6 Placement：**BLOCKED**
+- G7 Routing：**BLOCKED**
+- G8 ERC/DRC/工程审核：**BLOCKED**
+- G9 制造发布：**BLOCKED**
+- G10 Bring-up：**BLOCKED**
+- G11 高速切换/测量验证：**BLOCKED**
+- G12 Fig. 3完整实验复现：**BLOCKED**
+- G13 V2改版：**BLOCKED**
+
+## 当前子项目
+- SP1：论文方法和系统需求提取 — 可以继续；
+- SP2：Si8273栅极驱动、电源架构、0 V precondition — 可以继续；
+- SP3：VDC/RL漏极负载与测量回路 — 可以继续；
+- SP4：KiCad原理图和BOM — 等待G0-G2冻结；
+- SP5：PCB placement/routing — 等待SP4和前置审核；
+- SP6：硬件bring-up与验证 — 等待原型板；
+- SP7：B1505/JEP184校准与数据处理 — SP1定义稳定后可并行推进。
+
+## 当前未解决问题
+1. DUT准确型号、封装以及是否有独立Kelvin Source；
+2. 最终VGS-P、VGS-N、VGM-I、VGM-P、VGM-N范围；
+3. 0 V precondition的具体硬件拓扑；
+4. 选定DUT对应的VDC和RL设计值；
+5. Pulse Generator、示波器、差分探头的准确型号；
+6. PCB上使用的Si8273完整可订购料号和封装；
+7. LTspice中Si8273是否有可用厂商模型，若没有则采用什么等效模型。
+
+## 当前推荐下一步
+1. 完成G0：把论文Fig. 3的系统需求、三种测试时序和验收条件冻结；
+2. 完成G1：画清系统方框图、各模块接口、参考点和电流返回路径；
+3. 然后进入G2：对Si8273、DUT、Rg、去耦、0 V precondition、VDC/RL进行datasheet核对、计算和必要的LTspice仿真；
+4. G0-G2通过之前，不正式进入KiCad原理图。
+
+## 文档语言规则
+面向人的项目文档默认使用中文，以便快速理解；器件Pin名、Net名、文件名、公式变量、标准名称、软件命令和必要的专业缩写保留英文，例如`VDDA`、`GNDA`、`SREF`、`VGS-P`、`VGM-P`、`ERC`、`DRC`。Codex专用的机器约束文件如`AGENTS.md`可以保留英文，以减少执行歧义。
+
+## 进度更新规则
+每次出现实质性项目进展，都同时检查并更新：
+- `docs/project_status.md`
 - `docs/stage_gate.md`
+- 如涉及需求、接口、决策或风险，再同步更新对应文档。
 
-Current gate state:
-- G0 Requirements Definition — ACTIVE
-- G1 System Architecture — ACTIVE
-- G2 Component Selection & Calculations — NOT STARTED
-- G3 and later — BLOCKED until upstream gates pass
-
-`docs/stage_gate.md` must be updated whenever the project makes a meaningful design, verification, implementation, or test advance.
-
-## Completed
-- Repository initialized.
-- Baseline project constraints recorded.
-- Initial system requirements created.
-- Initial electrical interfaces created.
-- Initial decision log created.
-- Initial risk register created.
-- Master PCB stage-gate process created.
-
-## Active subprojects
-- SP1: paper method and system-requirement extraction — ready to start.
-- SP2: Si8273 gate drive, supply architecture, and 0 V precondition — ready to start.
-- SP3: drain resistive-load and measurement loop — ready to start.
-
-## Blocked until upstream approval
-- SP4: KiCad schematic and BOM.
-- SP5: PCB placement/routing.
-- SP6: hardware bring-up and validation execution.
-
-## Parallel software work
-- SP7: B1505/JEP184 calibration and data-analysis workflow may start after SP1 definitions are stable.
-
-## Current open questions
-1. Exact DUT model/package and Kelvin Source availability.
-2. Final stress and measurement voltage ranges.
-3. Exact 0 V precondition topology.
-4. VDC/RL design values for the selected DUT.
-5. Pulse generator, oscilloscope, and differential probe models.
-6. Exact Si8273 full orderable part number/package to be used on PCB.
-
-## Next master action
-Complete G0/G1 through SP1, SP2, and SP3 definition work, then begin G2 component selection and calculations before authorizing KiCad schematic implementation.
+任何Gate只有满足其PASS标准并有证据后，才可标记为`PASS`。
