@@ -3,6 +3,12 @@
 ## Project scope
 Reproduce the functional behavior of Fig. 3 in Li et al., IEEE TPEL 2024, for fast SiC MOSFET BTI threshold-voltage-shift measurement.
 
+## Mandatory chat-output persistence
+
+For every project chat that produces a user-facing output file, the file must be committed to its canonical repository path and registered in `docs/chat_output_index.md` before the task is reported complete. Read `docs/output_sync_policy.md` for scope and exceptions.
+
+Do not create empty files for chats with no deliverable. Do not commit copyrighted source PDFs without redistribution rights, credentials, secrets, personal sensitive data, or unapproved large binaries. If synchronization is blocked, report `OUTPUT_SYNC_BLOCKED` and the unsynchronized file explicitly.
+
 ## Hard constraints
 1. One PCB must support both positive and negative BTI.
 2. Positive/negative mode changes only through external VDDA/GNDA voltages and control waveform; do not require PCB component replacement.
@@ -18,6 +24,10 @@ Reproduce the functional behavior of Fig. 3 in Li et al., IEEE TPEL 2024, for fa
 12. Do not generate Gerbers or production files until ERC, DRC, manual review, and the verification matrix are approved.
 13. Do not silently connect GNDI, GNDA, SREF, chassis ground, or earth.
 14. Do not change frozen interfaces without master-project approval.
+15. Every generated project output file must be synchronized to GitHub before task completion.
+16. Every synchronized output must be registered in `docs/chat_output_index.md`.
+17. Never claim an output is synchronized until the remote file is verified.
+18. Apply the exclusions and blocked-state handling in `docs/output_sync_policy.md`.
 
 ## Required change report
 For every engineering change, report:
@@ -30,7 +40,7 @@ For every engineering change, report:
 - items requiring approval
 
 ## Preferred workflow
-1. Read `docs/requirements.md`, `docs/interfaces.md`, `docs/decisions.md`, and `docs/project_status.md` before modifying hardware files.
+1. Read `docs/output_sync_policy.md`, `docs/requirements.md`, `docs/interfaces.md`, `docs/decisions.md`, and `docs/project_status.md` before modifying hardware files.
 2. Work on a branch for nontrivial changes.
 3. Keep schematic, PCB, BOM, calculations, and documentation consistent.
 4. Run available checks after changes.
