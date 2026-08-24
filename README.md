@@ -9,6 +9,14 @@
 
 并在stress结束后约100 ns内获得可解释、可重复的VDS测量点，最终用于MI、MP、MN和ΔVth提取。
 
+## 项目级强制规则：聊天输出文件必须同步到 GitHub
+
+本项目每个聊天产生的用户可交付输出文件，必须在任务完成前保存到本仓库，并登记到 [`docs/chat_output_index.md`](docs/chat_output_index.md)。详细范围、路径、例外和完成条件见 [`docs/output_sync_policy.md`](docs/output_sync_policy.md)。
+
+当前 SP1 输出已保存为 [`docs/SP1_paper_method_system_requirements_v0.1.md`](docs/SP1_paper_method_system_requirements_v0.1.md)。
+
+无输出文件的普通讨论不要求创建空文件；无再分发权限的论文原 PDF、凭据、敏感信息和未批准的大文件不得直接提交。
+
 ## 核心项目规则
 - 同一块PCB必须同时支持正BTI和负BTI；
 - 正负模式只通过外部`VDDA/GNDA`电压和控制波形改变，不更换PCB元件；
@@ -19,7 +27,7 @@
 - 在ERC、DRC、人工审核和验证矩阵通过之前，不发布最终Gerber生产文件。
 
 ## 仓库结构
-- `docs/`：需求、接口、决策、风险、项目状态、Stage-Gate、验证矩阵；
+- `docs/`：需求、接口、决策、风险、项目状态、Stage-Gate、验证矩阵、聊天输出准则与索引；
 - `hardware/`：KiCad原理图、PCB、BOM、datasheet；
 - `calculations/`：电路、功率和时序计算；
 - `analysis/`：B1505和示波器数据处理脚本；

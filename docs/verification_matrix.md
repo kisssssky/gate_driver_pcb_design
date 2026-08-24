@@ -2,6 +2,8 @@
 
 Status: draft; acceptance limits must be refined by SP1/SP2/SP3.
 
+The complete SP1-v0.1 requirement/verification matrix is maintained in [`SP1_paper_method_system_requirements_v0.1.md`](SP1_paper_method_system_requirements_v0.1.md). This file retains the cross-project implementation checks.
+
 | Test ID | Requirement | Verification method | Acceptance criterion | Phase |
 |---|---|---|---|---|
 | TEST-001 | REQ-001/002 | Review schematic and mode table | Same assembled PCB supports both polarities using external supply/control changes only | Design review |
@@ -17,3 +19,5 @@ Status: draft; acceptance limits must be refined by SP1/SP2/SP3.
 | TEST-011 | REQ-102 | ERC | Pass or all remaining warnings individually approved | Schematic freeze |
 | TEST-012 | REQ-103 | DRC | Pass or all remaining warnings individually approved | PCB freeze |
 | TEST-013 | REQ-104 | Manufacturing hold review | Gerbers released only after ERC, DRC, manual review, and matrix approval | Release |
+| TEST-014 | REQ-105/106 | GitHub file and output-index audit | Every chat deliverable exists at its canonical repository path and is registered before task completion | Every deliverable |
+| TEST-015 | REQ-107/108 | Repository-content and blocked-state audit | No prohibited content is committed; blocked outputs are explicitly reported and recorded | Every deliverable |

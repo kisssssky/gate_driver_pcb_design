@@ -14,3 +14,4 @@ Status: initial draft
 | RISK-008 | RL/VDC combination produces excess self-heating | Vth shifts due to temperature instead of intended hysteresis | calculate current, pulse energy, and thermal limits before DUT tests | Open |
 | RISK-009 | Codex or automation invents pinout/rating/topology details | latent schematic or PCB error | AGENTS.md hard constraints; datasheet citations; manual review | Mitigated, monitor |
 | RISK-010 | Manufacturing files produced before design review | fabricated board contains unresolved errors | explicit manufacturing hold in AGENTS.md and requirements | Mitigated, monitor |
+| RISK-011 | Mandatory output synchronization causes copyrighted, secret, sensitive, or oversized files to be committed blindly | legal/privacy/security exposure or unusable repository history | `docs/output_sync_policy.md` exclusions; index blocked items; approve Git LFS/external storage before use | Mitigated, monitor |

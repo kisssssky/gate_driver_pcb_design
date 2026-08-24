@@ -11,6 +11,9 @@
 - DEC-008: The complete reproduction must include a 0 V precondition state in addition to stress and measurement states.
 - DEC-009: System success is judged by obtaining an interpretable VDS measurement point about 100 ns after stress removal, not by VOA edge speed alone.
 - DEC-010: No manufacturing output before ERC, DRC, manual review, and verification-matrix approval.
+- DEC-011: Every project chat output file must be saved to this GitHub repository before the corresponding task is considered complete.
+- DEC-012: Output files use their canonical engineering location and are registered in `docs/chat_output_index.md`; duplicate archive copies are not required.
+- DEC-013: Non-redistributable source PDFs, credentials, sensitive information, and unapproved large binaries are excluded from direct commits and require an explicit recorded alternative.
 
 ## Proposed but not yet frozen
 - PROP-001: Use a separate precondition clamp/switch for Gate-to-SREF 0 V state while Si8273 handles only the fast two-level stress/measurement transition.
@@ -20,3 +23,4 @@
 - `DEC-*` = approved baseline.
 - `PROP-*` = proposed; may not be treated as frozen by Codex.
 - Any change to `DEC-*` requires master-project approval and corresponding interface/risk review.
+- DEC-011 through DEC-013 were explicitly approved by the Master on 2026-08-24.
