@@ -1,0 +1,33 @@
+# System Requirements
+
+Status: draft baseline
+
+## Functional requirements
+- REQ-001: A single PCB shall support both positive and negative BTI operation.
+- REQ-002: Switching between positive and negative BTI modes shall require only changes to external VDDA/GNDA voltages and the VIA control waveform, not PCB component changes.
+- REQ-003: SREF shall be the DUT Kelvin Source reference.
+- REQ-004: SREF shall not be assumed to equal laboratory earth.
+- REQ-005: Si8273 VOA shall provide the fast stress-to-measurement gate-voltage transition.
+- REQ-006: Positive BTI mode shall use VDDA = VGS-P and GNDA = VGM-P, with VIA HIGH during stress and LOW during measurement.
+- REQ-007: Negative BTI mode shall use VDDA = VGM-N and GNDA = VGS-N, with VIA LOW during stress and HIGH during measurement.
+- REQ-008: The complete measurement sequence shall support 0 V precondition, stress, and measurement states.
+- REQ-009: The system shall support calibration, positive-stress, and negative-stress sequences corresponding to MI, MP, and MN extraction.
+- REQ-010: The target system-level test delay shall be approximately 100 ns from stress removal to an interpretable VDS measurement point.
+- REQ-011: VGS shall be measured relative to DUT Kelvin Source, not gate-to-earth.
+- REQ-012: The drain loop shall support a resistive-load measurement architecture consistent with Fig. 3 of the reference paper.
+- REQ-013: Power Source and Kelvin Source paths shall be separated where the DUT/package permits.
+- REQ-014: The design shall expose measurement points for VGS, VDS, and timing/trigger observation.
+
+## Process requirements
+- REQ-100: All component pin assignments and electrical ratings shall be verified from authoritative datasheets before schematic freeze.
+- REQ-101: All critical design decisions shall be tagged as paper-derived, datasheet-derived, calculated, or engineering assumption.
+- REQ-102: ERC shall pass or all residual warnings shall be explicitly reviewed before PCB layout freeze.
+- REQ-103: DRC shall pass or all residual warnings shall be explicitly reviewed before manufacturing output.
+- REQ-104: Gerbers and production files shall not be generated until ERC, DRC, manual review, and verification-matrix approval are complete.
+
+## Open requirement items
+- OPEN-REQ-001: Exact DUT model and package.
+- OPEN-REQ-002: Final VGS-P, VGS-N, VGM-I, VGM-P, and VGM-N ranges.
+- OPEN-REQ-003: Exact VDS-C, Ith, VDC, and RL targets for the selected DUT.
+- OPEN-REQ-004: Exact implementation of the 0 V precondition state.
+- OPEN-REQ-005: Instrument models and bandwidth requirements for VGS/VDS capture.
