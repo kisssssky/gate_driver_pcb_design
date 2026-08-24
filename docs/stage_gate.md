@@ -63,7 +63,7 @@ ChatGPT、论文、datasheet、GitHub文档。
 ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Codex只负责在批准后维护文档。
 ### 必须产出
 - `docs/requirements.md`
-- `docs/SP1_paper_method_system_requirements_v0.1.md`
+- `docs/SP1_paper_method_system_requirements_v0.2.md`
 - 状态表
 - 时序定义
 - 初版验证矩阵
@@ -76,7 +76,7 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - 系统级约100 ns测量目标被明确定义；
 - 所有未解决问题明确列出，不靠猜测补全。
 ### 当前状态
-**ACTIVE** — SP1-v0.1已完成并同步，36条需求与验证矩阵已建立；仍需Master冻结tdly、VDS/IDM容差、tpre/tmea、measurement-point算法和安全基线。
+**ACTIVE** — SP1-v0.2 Requirement Audit已完成并同步；36条需求ID保留，已修正证据分类与tdly定义；仍需Master冻结tdly工程验收、VDS/IDM容差、tpre/tmea、measurement-point算法和安全基线。
 
 ---
 
