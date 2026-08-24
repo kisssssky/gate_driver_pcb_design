@@ -2,6 +2,15 @@
 
 Status: draft baseline
 
+## Output persistence requirements
+
+- REQ-105: Every project chat that produces a user-facing output file shall synchronize that file to this GitHub repository before the task is marked complete.
+- REQ-106: Every synchronized output file shall be stored at its canonical engineering path and registered in `docs/chat_output_index.md`.
+- REQ-107: Outputs containing non-redistributable copyrighted material, credentials, secrets, personal sensitive information, or unapproved large binaries shall not be committed directly; the block and approved alternative shall be recorded.
+- REQ-108: If GitHub synchronization cannot be completed, the task shall report `OUTPUT_SYNC_BLOCKED` and identify every unsynchronized file.
+
+Detailed policy: [`output_sync_policy.md`](output_sync_policy.md).
+
 ## Functional requirements
 - REQ-001: A single PCB shall support both positive and negative BTI operation.
 - REQ-002: Switching between positive and negative BTI modes shall require only changes to external VDDA/GNDA voltages and the VIA control waveform, not PCB component changes.
