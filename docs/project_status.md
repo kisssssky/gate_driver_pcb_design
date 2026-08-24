@@ -1,6 +1,6 @@
 # 项目状态
 
-版本：v0.3
+版本：v0.4
 当前阶段：需求定义 + 系统架构
 
 ## 项目目标
@@ -16,6 +16,7 @@
 - 建立验证矩阵；
 - 建立`docs/stage_gate.md`作为PCB总流程和进度控制文件；
 - 完成SP1-v0.2 Requirement Audit：修正2项ERROR、2项AMBIGUOUS、5项UNSUPPORTED、3项OUT_OF_SCOPE；保留36条编号需求和验证矩阵；
+- 完成SP1 Final Gate Review：A-N全部PASS，状态为`READY FOR MASTER REVIEW`；
 - 建立项目级聊天输出文件GitHub同步准则与`docs/chat_output_index.md`；
 - 将“每个聊天产生的输出文件必须同步到GitHub”冻结为项目基本准则；
 - 确定人 / ChatGPT / Codex的职责边界；
@@ -38,7 +39,7 @@
 - G13 V2改版：**BLOCKED**
 
 ## 当前子项目
-- SP1：论文方法和系统需求提取 — **SP1-v0.2审计完成并同步；36条REQ保留，OPEN验收项等待Master冻结**；
+- SP1：论文方法和系统需求提取 — **SP1 STATUS: READY FOR MASTER REVIEW；A-N全部PASS；等待Master批准/退回，OPEN验收项尚未冻结**；
 - SP2：Si8273栅极驱动、电源架构、0 V precondition — 可以继续；
 - SP3：VDC/RL漏极负载与测量回路 — 可以继续；
 - SP4：KiCad原理图和BOM — 等待G0-G2冻结；
@@ -57,7 +58,7 @@
 8. 2026-08-24之前历史聊天输出文件的完整回填范围。
 
 ## 当前推荐下一步
-1. 完成G0：把论文Fig. 3的系统需求、三种测试时序和验收条件冻结；
+1. Master审查SP1-v0.2与Final Gate Review；批准后再冻结G0的系统需求、三种测试时序和验收条件；
 2. 完成G1：画清系统方框图、各模块接口、参考点和电流返回路径；
 3. 然后进入G2：对Si8273、DUT、Rg、去耦、0 V precondition、VDC/RL进行datasheet核对、计算和必要的LTspice仿真；
 4. G0-G2通过之前，不正式进入KiCad原理图。
