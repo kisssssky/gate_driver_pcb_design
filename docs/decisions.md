@@ -14,6 +14,9 @@
 - DEC-011: Every project chat output file must be saved to this GitHub repository before the corresponding task is considered complete.
 - DEC-012: Output files use their canonical engineering location and are registered in `docs/chat_output_index.md`; duplicate archive copies are not required.
 - DEC-013: Non-redistributable source PDFs, credentials, sensitive information, and unapproved large binaries are excluded from direct commits and require an explicit recorded alternative.
+- DEC-014: Master approves `SP1-v0.2 + SP1-FGR-v1.0` as the completed paper-method/system-requirement evidence baseline. SP1 is closed unless a source error is later discovered.
+- DEC-015: SP1 completion does not by itself close G0. G0 remains ACTIVE until project-level acceptance definitions and the canonical requirement baseline are frozen.
+- DEC-016: The platform target includes low-VDS BTI/Vth-hysteresis testing of both 650 V-class and 3.3 kV-class SiC MOSFETs. DUT blocking-voltage rating does not itself require the BTI test PCB to operate at 650 V or 3.3 kV.
 
 ## Proposed but not yet frozen
 - PROP-001: Use a separate precondition clamp/switch for Gate-to-SREF 0 V state while Si8273 handles only the fast two-level stress/measurement transition.
@@ -24,3 +27,4 @@
 - `PROP-*` = proposed; may not be treated as frozen by Codex.
 - Any change to `DEC-*` requires master-project approval and corresponding interface/risk review.
 - DEC-011 through DEC-013 were explicitly approved by the Master on 2026-08-24.
+- DEC-014 through DEC-016 were approved during the SP1 Master Review on 2026-08-24.
