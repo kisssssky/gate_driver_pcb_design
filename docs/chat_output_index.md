@@ -6,9 +6,10 @@
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
-| 2026-08-24 | SP1 — Final Gate Review | SP1最终交付审查与HANDOFF_PACKET | [SP1_final_gate_review_v1.0.md](SP1_final_gate_review_v1.0.md) | SP1-FGR-v1.0 | SYNCED | A-N全部PASS；SP1 STATUS: READY FOR MASTER REVIEW；不代表OPEN项已冻结 |
-| 2026-08-24 | SP1 — Requirement Audit | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.2.md](SP1_paper_method_system_requirements_v0.2.md) | SP1-v0.2 | SYNCED | 严格审计：2 ERROR、2 AMBIGUOUS、5 UNSUPPORTED、3 OUT_OF_SCOPE；36个REQ ID保留；OPEN项尚未冻结 |
-| 2026-08-24 | SP1 — 论文方法与系统需求 | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.1.md](SP1_paper_method_system_requirements_v0.1.md) | SP1-v0.1-r1 | SYNCED | 已修复Markdown/LaTeX符号乱码；技术内容未改变；OPEN项尚未冻结 |
+| 2026-08-24 | Master — SP1最终审核 | SP1 Master最终审核 | [SP1_master_review_v1.0.md](SP1_master_review_v1.0.md) | MASTER-SP1-REVIEW-v1.0 | SYNCED | `SP1 MASTER APPROVED / COMPLETE`；G0仍ACTIVE，等待canonical requirements与项目acceptance冻结 |
+| 2026-08-24 | SP1 — Final Gate Review | SP1最终交付审查与HANDOFF_PACKET | [SP1_final_gate_review_v1.0.md](SP1_final_gate_review_v1.0.md) | SP1-FGR-v1.0 | SYNCED | A-N全部PASS；已于Master Review中正式批准 |
+| 2026-08-24 | SP1 — Requirement Audit | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.2.md](SP1_paper_method_system_requirements_v0.2.md) | SP1-v0.2 | SYNCED | 严格审计：2 ERROR、2 AMBIGUOUS、5 UNSUPPORTED、3 OUT_OF_SCOPE；36个REQ ID保留；已于Master Review中正式批准 |
+| 2026-08-24 | SP1 — 论文方法与系统需求 | 论文方法与系统需求报告 | [SP1_paper_method_system_requirements_v0.1.md](SP1_paper_method_system_requirements_v0.1.md) | SP1-v0.1-r1 | SYNCED | 已被v0.2 supersede；保留历史追溯 |
 | 2026-08-24 | Master — 项目治理规则 | 聊天输出文件GitHub同步准则 | [output_sync_policy.md](output_sync_policy.md) | v1.0 | SYNCED | APPROVED PROJECT RULE |
 
 ## 登记规则
