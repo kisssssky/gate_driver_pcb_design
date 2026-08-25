@@ -8,6 +8,8 @@
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
+| 2026-08-25 | 项目介绍—中文版 | 面向组会、博士阶段汇报、项目评审和技术交流的中文项目介绍 | [project_introduction_zh_v1.0.md](project_introduction_zh_v1.0.md) | PROJECT-INTRO-ZH-v1.0 | SYNCED | 汇报材料；反映G0 PASS、需求基线FROZEN、G1 ACTIVE—READY FOR MASTER REVIEW，不改变任何Gate状态 |
+| 2026-08-25 | Project Introduction—English | English project introduction for presentations and technical reviews | [project_introduction_en_v1.0.md](project_introduction_en_v1.0.md) | PROJECT-INTRO-EN-v1.0 | SYNCED | Presentation material; no electrical behaviour or Stage-Gate status changed |
 | 2026-08-25 | G1系统架构返修最终检查 | 三引脚Source架构、Calibration Gate接口、PRECONDITION时序的12项返修验收与`HANDOFF_PACKET` | [G1_final_gate_review_v1.1.md](G1_final_gate_review_v1.1.md) | G1-FGR-v1.1 | SYNCED | `G1 STATUS: READY FOR MASTER REVIEW；G1 ACTIVE`；不表示PASS/FROZEN；G3 BLOCKED |
 | 2026-08-25 | G1系统架构返修 | 13模块、7状态、25接口、8图、三引脚`SOURCE_STAR/SREF/DRET`、`IF-GATE-01`、责任矩阵与14项FMEA | [G1_system_architecture_v1.1.md](G1_system_architecture_v1.1.md) | G1-SYS-ARCH-v1.1 | SYNCED | `G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW`；G1 ACTIVE；接口未FROZEN |
 | 2026-08-25 | G1系统架构历史检查 | G1 v1.0历史审核记录 | [G1_final_gate_review_v1.0.md](G1_final_gate_review_v1.0.md) | G1-FGR-v1.0 | SYNCED | 已被v1.1返修版supersede；不得作为当前三引脚DUT架构依据 |
