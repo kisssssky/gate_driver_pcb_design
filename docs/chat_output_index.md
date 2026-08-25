@@ -1,15 +1,17 @@
-# Chat Output Index
+# 聊天输出文件索引
 
 状态：ACTIVE
 
-当前项目状态：需求基线=`FROZEN`；G0=`PASS`；G1=`READY FOR MASTER REVIEW`；G2=`NOT STARTED / 可准备datasheet和计算`；G3=`BLOCKED`。
+当前项目状态：需求基线=`FROZEN`；G0=`PASS`；G1=`ACTIVE — READY FOR MASTER REVIEW（返修候选）`；G2=`NOT STARTED / 可准备datasheet和计算`；G3=`BLOCKED`。
 
 用途：登记本项目各聊天产生并已保存到 GitHub 的输出文件。登记不等于技术内容已经通过 Stage-Gate；技术状态以对应文件为准。
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
-| 2026-08-25 | G1 System Architecture — Final Gate Review | G1 A–V最终交付审核与HANDOFF_PACKET | [G1_final_gate_review_v1.0.md](G1_final_gate_review_v1.0.md) | G1-FGR-v1.0 | SYNCED | `A–V PASS；G1 READY FOR MASTER REVIEW；不表示PASS/FROZEN；G3 BLOCKED` |
-| 2026-08-25 | G1 System Architecture | 13模块、7状态、24接口、8图、OI-012...017 proposals、责任矩阵与FMEA | [G1_system_architecture_v1.0.md](G1_system_architecture_v1.0.md) | G1-SYS-ARCH-v1.0 | SYNCED | `G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW；接口未FROZEN` |
+| 2026-08-25 | G1系统架构返修最终检查 | 三引脚Source架构、Calibration Gate接口、PRECONDITION时序的12项返修验收与`HANDOFF_PACKET` | [G1_final_gate_review_v1.1.md](G1_final_gate_review_v1.1.md) | G1-FGR-v1.1 | SYNCED | `G1 STATUS: READY FOR MASTER REVIEW；G1 ACTIVE`；不表示PASS/FROZEN；G3 BLOCKED |
+| 2026-08-25 | G1系统架构返修 | 13模块、7状态、25接口、8图、三引脚`SOURCE_STAR/SREF/DRET`、`IF-GATE-01`、责任矩阵与14项FMEA | [G1_system_architecture_v1.1.md](G1_system_architecture_v1.1.md) | G1-SYS-ARCH-v1.1 | SYNCED | `G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW`；G1 ACTIVE；接口未FROZEN |
+| 2026-08-25 | G1系统架构历史检查 | G1 v1.0历史审核记录 | [G1_final_gate_review_v1.0.md](G1_final_gate_review_v1.0.md) | G1-FGR-v1.0 | SYNCED | 已被v1.1返修版supersede；不得作为当前三引脚DUT架构依据 |
+| 2026-08-25 | G1系统架构历史候选 | v1.0历史架构与接口候选 | [G1_system_architecture_v1.0.md](G1_system_architecture_v1.0.md) | G1-SYS-ARCH-v1.0 | SYNCED | 已被v1.1返修版supersede；旧DUT边界和接口计数不再有效 |
 | 2026-08-25 | G0 Master Review | G0规范需求基线Master最终审核与安装授权 | [G0_master_review_v1.0.md](G0_master_review_v1.0.md) | G0-MASTER-REVIEW-v1.0 | SYNCED | `G0 PASS；canonical requirement baseline FROZEN；OI-000 RESOLVED；65/65 verification coverage` |
 | 2026-08-25 | G0 Canonical Installation & Closure | 规范需求安装、验证矩阵重建、状态一致性检查、GitHub回读和HANDOFF_PACKET | [G0_canonical_baseline_installation_closure_v1.0.md](G0_canonical_baseline_installation_closure_v1.0.md) | G0-INSTALL-CLOSE-v1.0 | SYNCED | `G0 PASS；canonical requirement baseline FROZEN；OI-000 RESOLVED；65/65 verification coverage` |
 | 2026-08-25 | G0 Correction — 中文可读性与最终追溯修正 | 中文项目摘要、65条规范需求、69行逐项映射、23个OPEN项、自动检查和HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.2.md](G0_closing_requirements_baseline_v1.2.md) | G0-CRB-v1.2 | SYNCED | `G0-CRB-v1.2中文可读性重构与最终追溯修正；READY FOR MASTER REVIEW；未FROZEN；G0未PASS` |
