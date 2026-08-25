@@ -1,6 +1,6 @@
 # 项目状态
 
-版本：v0.7
+版本：v0.8
 当前阶段：G1系统架构
 
 - 需求基线状态：**FROZEN — Master approved G0 canonical requirement baseline**
@@ -35,13 +35,18 @@
 - 重建`docs/verification_matrix.md`，覆盖65/65条需求，无孤立需求或测试；
 - `OPEN::OI-000`已由Master批准并关闭；`OPEN::OI-001...022`继续按批准的owner、deadline和Gate关闭；
 - 完成G0安装文件的GitHub同步、远端回读和状态一致性检查。
-- 创建`docs/G1_system_architecture_v1.0.md`与`docs/G1_final_gate_review_v1.0.md`；完成13个模块、7个状态、24个逻辑接口、8幅Mermaid图、责任矩阵和14项FMEA。
+- `docs/G1_system_architecture_v1.0.md`与`docs/G1_final_gate_review_v1.0.md`为历史候选，已被三引脚返修版v1.1 supersede。
 - `OI-012...017`均形成`G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW`，等待Master批准；未选择器件、数值、connector pinout或具体拓扑。
 - `docs/interfaces.md`更新为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`；接口尚未`FROZEN`。
+- Master审核结论为`CHANGES REQUIRED；G1 ACTIVE`，已按三引脚DUT边界完成G1 v1.1返修。
+- 创建`docs/G1_system_architecture_v1.1.md`与`docs/G1_final_gate_review_v1.1.md`：DUT只保留Gate/Drain/Source三个物理引脚；`SREF`与`DRET`在`DUT_SOURCE/SOURCE_STAR`单点汇合。
+- 新增`IF-GATE-01 / CAL_GATE_TARGET`，由Gate目标协调模块向`DUT_GATE`提供相对`SREF`的`VGM-I`逻辑目标；接口总数重新计算为25。
+- PRECONDITION只有在0 V Gate目标、`VDC/RL`供能、`VDS=VDC`和漏极回路全部验证有效后才开始`tpre`；fault后不得自动重启。
+- 三引脚封装内部公共Source阻抗已进入DUT profile要求、RISK-007、FMEA与G11验证；未修改冻结需求。
 
 ## 当前Stage-Gate状态
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**READY FOR MASTER REVIEW**
+- G1 系统架构：**ACTIVE — READY FOR MASTER REVIEW（返修候选，等待Master复审）**
 - G2 器件选型与计算：**NOT STARTED / 可开始准备datasheet与DUT参数**
 - G3 KiCad原理图：**BLOCKED**
 - G4 Footprint验证：**BLOCKED**
@@ -57,15 +62,15 @@
 
 ## 当前子项目
 - SP1：论文方法和系统需求提取 — **MASTER APPROVED / COMPLETE**；后续工程选择不再回填为论文事实；
-- SP2：Si8273栅极驱动、电源架构、0 V precondition — G1候选接口已明确，可准备G2 datasheet和计算；具体实现仍待Master/G2批准；
-- SP3：VDC/RL漏极负载与测量回路 — G1候选职责已明确，可准备G2参数计算；具体数值仍待批准；
+- SP2：Si8273栅极驱动、电源架构、0 V precondition与Calibration Gate目标 — v1.1候选接口已明确，可准备G2 datasheet和计算；具体rail、mux、clamp、器件与拓扑仍待Master/G2/G3批准；
+- SP3：VDC/RL漏极负载与测量回路 — 三引脚`SOURCE_STAR/SREF/DRET`候选职责已明确，可准备G2参数计算；具体数值仍待批准；
 - SP4：KiCad原理图和BOM — 等待G0-G2冻结；
 - SP5：PCB placement/routing — 等待SP4和前置审核；
 - SP6：硬件bring-up与验证 — 等待原型板；
 - SP7：B1505/JEP184校准与数据处理 — 可根据已批准SP1方法基线并行推进算法定义。
 
 ## 当前未解决问题
-1. 650 V-class和3.3 kV-class目标DUT的准确型号、封装、Qg以及是否有独立Kelvin Source；
+1. 650 V-class和3.3 kV-class目标DUT的准确型号、三引脚封装、`Qg`及封装公共Source阻抗验证资料；
 2. 最终VGS-P、VGS-N、VGM-I、VGM-P、VGM-N范围；
 3. 0 V precondition的具体硬件拓扑；
 4. 各目标DUT对应的VDS-C、Ith、VDC和RL设计值；
@@ -75,13 +80,13 @@
 8. 项目`tdly`精确PASS算法：起点、终点、extremum search、filter、ringing、deskew/de-embedding；
 9. `VDS≈VDS-C`容差、`IDM-P/N`匹配容差、tpre/tmea和self-heating验收条件；
 10. SAFE_OFF、上电/掉电顺序、interlock与protection最低要求；
-11. 650 V/3.3 kV DUT的connector/adapter与允许更换Rg策略；
+11. 650 V/3.3 kV三引脚DUT的connector/adapter、`SOURCE_STAR`落点与允许更换`Rg`策略；
 12. 2026-08-24之前历史聊天输出文件的完整回填范围。
 
 上述技术问题均已纳入`OPEN::OI-001...022`控制；需求基线冻结不表示这些后续参数或实现已经确定。
 
 ## 当前推荐下一步
-1. Master审核`G1_system_architecture_v1.0.md`、G1 ICD和`OI-012...017` proposals；
+1. Master复审`G1_system_architecture_v1.1.md`、25接口G1 ICD和`OI-012...017` proposals；
 2. G1在Master批准前不得标记`PASS`或`FROZEN`；
 3. G2可准备Si8273和目标DUT的datasheet核对与计算，所有具体数值必须来自批准的DUT配置档案；
 4. G1与G2均通过之前，G3 KiCad原理图保持`BLOCKED`；
