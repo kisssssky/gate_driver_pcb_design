@@ -1,7 +1,10 @@
 # 项目状态
 
-版本：v0.5
-当前阶段：G0收尾 + G1系统架构
+版本：v0.6
+当前阶段：G1系统架构
+
+- 需求基线状态：**FROZEN — Master approved G0 canonical requirement baseline**
+- G0阶段门状态：**PASS**
 
 ## 项目目标
 功能复现 Li et al., IEEE TPEL 2024 Fig. 3 的SiC MOSFET快速阈值电压迟滞测试架构。重点不是单独追求Si8273输出边沿小于100 ns，而是让DUT完成`0 V预处理 → stress → measurement`，并在stress结束后约100 ns内获得可解释、可重复的VDS测量点。
@@ -26,9 +29,15 @@
 - 将“每个聊天产生的输出文件必须同步到GitHub”冻结为项目基本准则；
 - 确定人 / ChatGPT / Codex的职责边界；
 - 确定主要软件链：ChatGPT + LTspice + KiCad + GitHub/Codex + Python + B1505/EasyEXPERT。
+- Master批准`G0-CRB-v1.2`、65条`REQ-SYS-*`规范需求和69行SP1/legacy crosswalk；
+- 创建`docs/G0_master_review_v1.0.md`，并以`DEC-017`记录批准与变更控制；
+- 将65条需求正式安装进`docs/requirements.md`，需求基线状态为`FROZEN`；
+- 重建`docs/verification_matrix.md`，覆盖65/65条需求，无孤立需求或测试；
+- `OPEN::OI-000`已由Master批准并关闭；`OPEN::OI-001...022`继续按批准的owner、deadline和Gate关闭；
+- 完成G0安装文件的GitHub同步、远端回读和状态一致性检查。
 
 ## 当前Stage-Gate状态
-- G0 需求定义：**ACTIVE — SP1已Master批准；等待canonical requirements合并和项目级acceptance冻结**
+- G0 需求定义：**PASS — canonical requirement baseline FROZEN**
 - G1 系统架构：**ACTIVE**
 - G2 器件选型与计算：**NOT STARTED / 可开始准备datasheet与DUT参数**
 - G3 KiCad原理图：**BLOCKED**
@@ -64,15 +73,16 @@
 9. `VDS≈VDS-C`容差、`IDM-P/N`匹配容差、tpre/tmea和self-heating验收条件；
 10. SAFE_OFF、上电/掉电顺序、interlock与protection最低要求；
 11. 650 V/3.3 kV DUT的connector/adapter与允许更换Rg策略；
-12. 将SP1批准的36-ID requirement set正式合并进canonical `docs/requirements.md`，消除旧项目REQ与SP1 REQ的编号/层级歧义；
-13. 2026-08-24之前历史聊天输出文件的完整回填范围。
+12. 2026-08-24之前历史聊天输出文件的完整回填范围。
+
+上述技术问题均已纳入`OPEN::OI-001...022`控制；需求基线冻结不表示这些后续参数或实现已经确定。
 
 ## 当前推荐下一步
-1. 执行 **G0 Closing**：把SP1的36条requirements与当前`docs/requirements.md`合并并建立完整traceability；
-2. 同时完成 **G1 System Architecture**：画清系统方框图、各模块接口、SREF/GNDA/GNDI/earth关系和关键电流返回路径；
-3. 确定哪些acceptance必须在G0冻结，哪些可以明确延期到G2或prototype validation再冻结；
-4. 然后进入G2：对Si8273、650 V/3.3 kV目标DUT、Rg、去耦、0 V precondition、VDC/RL进行datasheet核对、计算和必要的LTspice仿真；
-5. G0-G2通过之前，不正式进入KiCad原理图。
+1. 继续 **G1 System Architecture**：画清系统方框图、模块职责、SREF/GNDA/GNDI/earth关系和关键电流返回路径；
+2. 在G1截止点前关闭`OPEN::OI-012...017`，但不提前选择具体器件值或连接器pinout；
+3. G2可准备Si8273和目标DUT的datasheet核对与计算，所有具体数值必须来自批准的DUT配置档案；
+4. G1和G2均通过之前，G3 KiCad原理图保持`BLOCKED`；
+5. 后续Gate不会因G0关闭而自动通过。
 
 ## 文档语言规则
 面向人的项目文档默认使用中文，以便快速理解；器件Pin名、Net名、文件名、公式变量、标准名称、软件命令和必要的专业缩写保留英文，例如`VDDA`、`GNDA`、`SREF`、`VGS-P`、`VGM-P`、`ERC`、`DRC`。Codex专用的机器约束文件如`AGENTS.md`可以保留英文，以减少执行歧义。
