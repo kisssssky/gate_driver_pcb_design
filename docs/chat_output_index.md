@@ -2,10 +2,14 @@
 
 状态：ACTIVE
 
+当前项目状态：需求基线=`FROZEN`；G0=`PASS`；G1=`ACTIVE`；G3=`BLOCKED`。
+
 用途：登记本项目各聊天产生并已保存到 GitHub 的输出文件。登记不等于技术内容已经通过 Stage-Gate；技术状态以对应文件为准。
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
+| 2026-08-25 | G0 Master Review | G0规范需求基线Master最终审核与安装授权 | [G0_master_review_v1.0.md](G0_master_review_v1.0.md) | G0-MASTER-REVIEW-v1.0 | SYNCED | `G0 PASS；canonical requirement baseline FROZEN；OI-000 RESOLVED；65/65 verification coverage` |
+| 2026-08-25 | G0 Canonical Installation & Closure | 规范需求安装、验证矩阵重建、状态一致性检查、GitHub回读和HANDOFF_PACKET | [G0_canonical_baseline_installation_closure_v1.0.md](G0_canonical_baseline_installation_closure_v1.0.md) | G0-INSTALL-CLOSE-v1.0 | SYNCED | `G0 PASS；canonical requirement baseline FROZEN；OI-000 RESOLVED；65/65 verification coverage` |
 | 2026-08-25 | G0 Correction — 中文可读性与最终追溯修正 | 中文项目摘要、65条规范需求、69行逐项映射、23个OPEN项、自动检查和HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.2.md](G0_closing_requirements_baseline_v1.2.md) | G0-CRB-v1.2 | SYNCED | `G0-CRB-v1.2中文可读性重构与最终追溯修正；READY FOR MASTER REVIEW；未FROZEN；G0未PASS` |
 | 2026-08-24 | G0 Correction — Master Return | G0 canonical requirement baseline correction + exact crosswalk + automated checks + HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.1.md](G0_closing_requirements_baseline_v1.1.md) | G0-CRB-v1.1 | SYNCED | `G0-CRB-v1.1 corrected after Master return; READY FOR MASTER REVIEW; not FROZEN; G0 not PASS` |
 | 2026-08-24 | G0 Closing — Requirement Merge | G0 canonical requirement baseline proposal + Final Gate Review + HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.0.md](G0_closing_requirements_baseline_v1.0.md) | G0-CRB-v1.0 | SYNCED | `G0 STATUS: READY FOR MASTER REVIEW`；65条candidate canonical REQ；未标记FROZEN，未宣告G0 PASS |
