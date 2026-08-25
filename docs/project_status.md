@@ -1,6 +1,6 @@
 # 项目状态
 
-版本：v0.6
+版本：v0.7
 当前阶段：G1系统架构
 
 - 需求基线状态：**FROZEN — Master approved G0 canonical requirement baseline**
@@ -35,10 +35,13 @@
 - 重建`docs/verification_matrix.md`，覆盖65/65条需求，无孤立需求或测试；
 - `OPEN::OI-000`已由Master批准并关闭；`OPEN::OI-001...022`继续按批准的owner、deadline和Gate关闭；
 - 完成G0安装文件的GitHub同步、远端回读和状态一致性检查。
+- 创建`docs/G1_system_architecture_v1.0.md`与`docs/G1_final_gate_review_v1.0.md`；完成13个模块、7个状态、24个逻辑接口、8幅Mermaid图、责任矩阵和14项FMEA。
+- `OI-012...017`均形成`G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW`，等待Master批准；未选择器件、数值、connector pinout或具体拓扑。
+- `docs/interfaces.md`更新为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`；接口尚未`FROZEN`。
 
 ## 当前Stage-Gate状态
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**ACTIVE**
+- G1 系统架构：**READY FOR MASTER REVIEW**
 - G2 器件选型与计算：**NOT STARTED / 可开始准备datasheet与DUT参数**
 - G3 KiCad原理图：**BLOCKED**
 - G4 Footprint验证：**BLOCKED**
@@ -54,8 +57,8 @@
 
 ## 当前子项目
 - SP1：论文方法和系统需求提取 — **MASTER APPROVED / COMPLETE**；后续工程选择不再回填为论文事实；
-- SP2：Si8273栅极驱动、电源架构、0 V precondition — 可在G1接口明确后继续；
-- SP3：VDC/RL漏极负载与测量回路 — 可在G1接口明确后继续；
+- SP2：Si8273栅极驱动、电源架构、0 V precondition — G1候选接口已明确，可准备G2 datasheet和计算；具体实现仍待Master/G2批准；
+- SP3：VDC/RL漏极负载与测量回路 — G1候选职责已明确，可准备G2参数计算；具体数值仍待批准；
 - SP4：KiCad原理图和BOM — 等待G0-G2冻结；
 - SP5：PCB placement/routing — 等待SP4和前置审核；
 - SP6：硬件bring-up与验证 — 等待原型板；
@@ -78,11 +81,11 @@
 上述技术问题均已纳入`OPEN::OI-001...022`控制；需求基线冻结不表示这些后续参数或实现已经确定。
 
 ## 当前推荐下一步
-1. 继续 **G1 System Architecture**：画清系统方框图、模块职责、SREF/GNDA/GNDI/earth关系和关键电流返回路径；
-2. 在G1截止点前关闭`OPEN::OI-012...017`，但不提前选择具体器件值或连接器pinout；
+1. Master审核`G1_system_architecture_v1.0.md`、G1 ICD和`OI-012...017` proposals；
+2. G1在Master批准前不得标记`PASS`或`FROZEN`；
 3. G2可准备Si8273和目标DUT的datasheet核对与计算，所有具体数值必须来自批准的DUT配置档案；
-4. G1和G2均通过之前，G3 KiCad原理图保持`BLOCKED`；
-5. 后续Gate不会因G0关闭而自动通过。
+4. G1与G2均通过之前，G3 KiCad原理图保持`BLOCKED`；
+5. 后续Gate不会因G0或G1候选基线就自动通过。
 
 ## 文档语言规则
 面向人的项目文档默认使用中文，以便快速理解；器件Pin名、Net名、文件名、公式变量、标准名称、软件命令和必要的专业缩写保留英文，例如`VDDA`、`GNDA`、`SREF`、`VGS-P`、`VGM-P`、`ERC`、`DRC`。Codex专用的机器约束文件如`AGENTS.md`可以保留英文，以减少执行歧义。
