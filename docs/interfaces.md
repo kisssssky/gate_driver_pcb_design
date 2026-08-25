@@ -1,27 +1,35 @@
-# Interface Definitions
+# 系统接口控制文件
 
-Status: **PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW**
-
-- 版本：`G1-ICD-v1.0`
+- 状态：**PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW**
+- G1阶段门：`ACTIVE`
+- 版本：`G1-ICD-v1.1`
 - 日期：2026-08-25
-- 需求基线：65条`REQ-SYS-*`保持`FROZEN`
-- 详细架构与接口责任：[`G1_system_architecture_v1.0.md`](G1_system_architecture_v1.0.md)
-- 本文件只定义逻辑接口，不是connector pin assignment，也不选择具体电平、器件或拓扑。
+- 上游需求：65条`REQ-SYS-*`规范需求，状态`FROZEN`
 
-## 1. Reference domains
+本文件是G1逻辑接口候选基线，不是connector pinout、原理图或PCB netlist。Master批准前不得标记`FROZEN`。
 
-| Domain | 受控定义 |
+## 1. 三引脚DUT与Source接口规则
+
+当前650 V-class和3.3 kV-class DUT均只有Gate、Drain、Source三个物理引脚。
+
+| 名称 | 定义 |
 |---|---|
-| `GNDI` | Si8273 logic-side reference；可作为Pulse Generator输入接口参考，但不跨越隔离边界。 |
-| `GNDA` | Si8273 channel A output-side lower rail；不是0 V、`SREF`或earth的别名。 |
-| `VDDA` | Si8273 channel A output-side upper rail；不是固定正电压或earth的别名。 |
-| `SREF` | DUT Kelvin Source reference；是`VGS`驱动和测量参考。 |
-| `DRET` | G1提出的`VDC return`/Power Source回路返回域；不是`SREF`或earth。 |
-| earth/chassis | 实验室保护地或仪器机壳；任何信号域连接均须显式批准和资格确认。 |
+| `DUT_SOURCE` | 三引脚DUT唯一Source物理引脚。 |
+| `SOURCE_STAR` | `DUT_SOURCE`引脚或焊盘处，`SREF`和`DRET`的有意单点汇合位置。 |
+| `SREF` | 从`SOURCE_STAR`引出的Gate回流和`VGS`测量Kelvin式参考路径；不是第四个引脚。 |
+| `DRET` | 从同一`SOURCE_STAR`引出的漏极功率返回路径；不是独立电气域。 |
 
-Isolation boundary位于`GNDI`与Si8273 channel A output domain之间。禁止隐式连接：`GNDI↔GNDA/SREF/earth`、`GNDA↔SREF/DRET/earth`、`VDDA↔earth`、`SREF↔DRET/earth`。三端DUT导致KS/Power Source不可物理分开的情况只能作为DUT profile限制记录，不得成为Base PCB默认连接。
+`SREF`与`DRET`在Source端导通，但除`SOURCE_STAR`外不得在上游再次连接。三引脚封装内部公共Source电阻/电感无法由PCB完全消除，必须写入DUT profile并在G11验证。未来四引脚器件必须重新进行接口和adapter审核。
 
-## 2. 冻结P/N逻辑关系
+## 2. 参考域与rail关系
+
+| 名称 | 定义 |
+|---|---|
+| `GNDI` | Si8273逻辑输入侧参考。 |
+| `GNDA` | Si8273 channel A输出侧低rail；不是0 V、`SREF`或earth的别名。 |
+| `VDDA` | Si8273 channel A输出侧高rail；不是固定正电压或earth。 |
+| `SREF` | 三引脚Source端Kelvin式Gate驱动和`VGS`测量参考。 |
+| earth/chassis | 实验室保护地或仪器机壳参考；不得默认连接任一信号reference。 |
 
 Positive BTI：
 
@@ -37,51 +45,56 @@ Negative BTI：
 - stress：`VIA=LOW`
 - measurement：`VIA=HIGH`
 
-公式不代表`GNDA=SREF`、`GNDA=earth`、`SREF=earth`，也不批准rail generation/return拓扑。
+公式不表示`GNDA=SREF`、`GNDA=earth`或`SREF=earth`，也不批准rail生成或回流拓扑。禁止隐式连接`GNDI↔GNDA/SREF/earth`、`GNDA/VDDA↔earth`、`SREF↔earth`；`SREF`和`DRET`只允许在`SOURCE_STAR`汇合。
 
-## 3. ICD总表（24个逻辑接口）
+## 3. 接口总表（25个逻辑接口）
 
-| Interface ID | 逻辑名称 | Source → Sink | 方向/类型 | Reference | 正常责任 | `SAFE_OFF`责任 | 可配置项/延期 | 对应REQ |
-|---|---|---|---|---|---|---|---|---|
-| IF-CTRL-01 | `VIA` | Pulse Generator → Si8273 input | 控制→ | `GNDI` | P/N真值命令 | stress无效/屏蔽 | 电平/边沿：G2 | `REQ-SYS-FUNC-008`; `REQ-SYS-INTERFACE-005` |
-| IF-CTRL-02 | `TRIGGER_TIMING_REF` | Pulse Generator → scope/software | 时序→ | source=`GNDI`，接收域待资格确认 | 同次事件时间参考 | 只记录fault | 通道/deskew：G2/G10/G11 | `REQ-SYS-MEAS-001`; `REQ-SYS-INTERFACE-005/009`; `REQ-SYS-VERIFY-001` |
-| IF-CTRL-03 | `STATE_COMMAND` | controller → interlock/state functions | 控制→ | 控制域 | 选择Calibration/P/N和状态 | 只允许stop/reset/re-arm | timing：G10/G12 | `REQ-SYS-FUNC-003`; `REQ-SYS-TIME-003...006` |
-| IF-PWR-I-01 | `VDDI/GNDI` | logic supply → Si8273 input | 能量/return | `GNDI` | 逻辑供电 | 维持fault记录或受控关断 | 数值：G2 | `REQ-SYS-INTERFACE-003`; `REQ-SYS-SAFE-002` |
-| IF-PWR-A-01 | `VDDA/GNDA` | floating rails → Si8273 output | 能量/return | output rail domain | 提供P/N rails | disable或批准safe行为 | 数值：G2 | `REQ-SYS-FUNC-008`; `REQ-SYS-INTERFACE-006` |
-| IF-PWR-A-02 | `RAIL_SREF_PROFILE` | SREF/profile ↔ floating rails | reference/return↔ | `SREF`边界 | 定义rail相对SREF并闭合gate电流 | 不得借earth闭合 | 拓扑：G2/Master | `REQ-SYS-INTERFACE-001...003/006`; `REQ-SYS-SAFE-004` |
-| IF-DRV-01 | `VOA` | Si8273 A → `Rg`/Gate | gate energy↔ | output domain，相对`SREF` | stress→measurement快切换 | inhibited/non-stress | 动态：G2/G11 | `REQ-SYS-FUNC-007/008`; `REQ-SYS-TIME-001/002` |
-| IF-DUT-01 | `DUT_GATE` | driver/PRECONDITION → DUT | gate energy↔ | `SREF` | 承载目标VGS | `VGS_SAFE` | `Rg`/物理：G2/G4/G6/G7 | `REQ-SYS-METHOD-001/002`; `REQ-SYS-DUT-005` |
-| IF-DUT-02 | `DUT_KS/SREF` | DUT KS ↔ driver/measurement | reference/return | `SREF` | gate和VGS参考 | 保持受控、不接earth | KS存在性：G2/G4 | `REQ-SYS-INTERFACE-001...004`; `REQ-SYS-MEAS-002` |
-| IF-DUT-03 | `DUT_POWER_SOURCE` | DUT → `DRET` | drain current→ | `DRET` | 漏极回流 | 去能量 | package：G4 | `REQ-SYS-FUNC-004`; `REQ-SYS-INTERFACE-004/007` |
-| IF-DUT-04 | `DUT_DRAIN` | `RL` → DUT | drain current→ | `DRET` | 接收低能量电流 | de-energized | profile：G2 | `REQ-SYS-FUNC-004`; `REQ-SYS-INTERFACE-007` |
-| IF-DRAIN-01 | `VDC` | drain supply → `RL` | 能量→ | `DRET` | 低`VDS`偏置 | disabled | 数值/限流：G2 | `REQ-SYS-METHOD-003...008`; `REQ-SYS-INTERFACE-007`; `REQ-SYS-SAFE-003/004` |
-| IF-DRAIN-02 | `RL` | load → DUT Drain | 能量→ | `DRET` | 限流并支持IDS计算 | 回路disabled | 数值/额定：G2 | `REQ-SYS-FUNC-004/005`; `REQ-SYS-MEAS-004` |
-| IF-MEAS-01 | `VGS_GATE_SENSE` | DUT Gate → VGS probe | 测量→ | 与SREF成对 | VGS正端 | 不作有效measurement | probe：G2/G6/G10 | `REQ-SYS-MEAS-001...003`; `REQ-SYS-INTERFACE-009` |
-| IF-MEAS-02 | `VGS_KS_SENSE` | DUT KS → VGS probe | 测量→ | `SREF` | VGS负端 | 不接earth | KS/adapter：G4/G6 | `REQ-SYS-MEAS-002/003`; `REQ-SYS-INTERFACE-009` |
-| IF-MEAS-03 | `VDS_DRAIN_SENSE` | DUT Drain → VDS probe | 测量→ | 与Power Source成对 | VDS正端 | 确认去能量 | 共模/带宽：G2/G10 | `REQ-SYS-MEAS-001/003`; `REQ-SYS-INTERFACE-009` |
-| IF-MEAS-04 | `VDS_SOURCE_SENSE` | DUT Power Source → VDS probe | 测量→ | `DRET`局部source | VDS负端 | 确认去能量 | source点：G4/G6 | `REQ-SYS-INTERFACE-004/009`; `REQ-SYS-VERIFY-001` |
-| IF-DATA-01 | `B1505_CAL_DATA` | B1505 → software | 数据→ | data domain | curve、Ith、VDS-C、metadata | 保持只读追溯 | 格式/插值：G12 | `REQ-SYS-METHOD-003`; `REQ-SYS-MEAS-006...009`; `REQ-SYS-INTERFACE-008` |
-| IF-DATA-02 | `WAVEFORM_DATA` | scope → software | 数据→ | data domain | raw VGS/VDS/timing/metadata | fault波形标invalid | 格式/deskew：G10/G11/G12 | `REQ-SYS-MEAS-001/005/009`; `REQ-SYS-VERIFY-001/004` |
-| IF-CFG-01 | `DUT_PROFILE_CONFIG` | controlled record/User → system | 数据/许可→ | configuration domain | 绑定DUT/adapter/`Rg`/参数 | mismatch禁止arm | 具体数据：G2/G4/G12 | `REQ-SYS-FUNC-002`; `REQ-SYS-DUT-001...005`; `REQ-SYS-SAFE-004` |
-| IF-SAFE-01 | `PROTECTION_INTERLOCK_STATUS` | detectors/user → SAFE_OFF control | 状态→ | 各source域 | all-valid才arm | 任一invalid强制safe | 阈值：G2 | `REQ-SYS-SAFE-001...003`; `REQ-SYS-INTERFACE-005/010` |
-| IF-SAFE-02 | `GATE_POWER_ENABLE_DISABLE` | SAFE_OFF control → rails/driver | 控制→ | 隔离控制域 | 受控gate enable | inhibit/保持必要safe能量 | default：G2/G10 | `REQ-SYS-SAFE-001/002` |
-| IF-SAFE-03 | `DRAIN_ENABLE_DISABLE` | SAFE_OFF control/user → VDC | 控制→ | 外部电源域 | precondition valid后供能 | disable优先 | 响应：G2/G10 | `REQ-SYS-SAFE-001...004`; `REQ-SYS-INTERFACE-007` |
-| IF-SAFE-04 | `FAULT_LOG_STATUS` | controller/instruments → software/User | 数据→ | data domain | 保存cause/state/profile/time | 锁存并阻止自动re-arm | 格式：G10/G12 | `REQ-SYS-MEAS-009`; `REQ-SYS-SAFE-002/003`; `REQ-SYS-VERIFY-004` |
+| 接口ID | 名称 | Source | Sink | 类型/方向 | 参考 | 正常含义 | `SAFE_OFF`含义 | 后续Gate | 需求追溯 |
+|---|---|---|---|---|---|---|---|---|---|
+| IF-CTRL-01 | `VIA` | Pulse Generator | Si8273输入 | 控制→ | `GNDI` | 执行P/N真值 | 不得产生stress | G2/G10/G11 | `REQ-SYS-FUNC-007`、`REQ-SYS-FUNC-008`、`REQ-SYS-INTERFACE-005` |
+| IF-CTRL-02 | `TRIGGER_TIMING_REF` | Pulse Generator | 示波器/软件 | 时序→ | 接收端资格确认 | 共同时间关系 | 仅记录fault/stop | G2/G10/G11 | `REQ-SYS-TIME-002`、`REQ-SYS-MEAS-001`、`REQ-SYS-VERIFY-001` |
+| IF-CTRL-03 | `STATE_COMMAND` | Sequence controller | 协调/安全模块 | 控制→ | `GNDI`/隔离状态域 | 选择Calibration/P/N和状态 | 仅stop/reset/re-arm | G10/G12 | `REQ-SYS-FUNC-003`、`REQ-SYS-TIME-003`、`REQ-SYS-TIME-004`、`REQ-SYS-TIME-005`、`REQ-SYS-TIME-006` |
+| IF-PWR-I-01 | `VDDI_GNDI` | 逻辑电源 | Si8273输入侧 | 能量↔ | `GNDI` | 逻辑供电 | 未ready不得arm | G2/G3/G10 | `REQ-SYS-INTERFACE-003`、`REQ-SYS-SAFE-002` |
+| IF-PWR-A-01 | `VDDA_GNDA` | 浮动rail | Si8273输出侧 | 能量↔ | 输出rail域 | 提供profile rail | disabled/非应力 | G2/G3/G10 | `REQ-SYS-FUNC-002`、`REQ-SYS-INTERFACE-006`、`REQ-SYS-SAFE-004` |
+| IF-PWR-A-02 | `RAIL_SREF_PROFILE` | profile/`SREF`接口 | 浮动rail | 目标/参考↔ | `SREF`边界 | 定义rail相对`SREF`目标 | 不借earth闭合 | G2/G3/G10 | `REQ-SYS-INTERFACE-001`、`REQ-SYS-INTERFACE-002`、`REQ-SYS-INTERFACE-003`、`REQ-SYS-INTERFACE-006` |
+| IF-DRV-01 | `VOA` | Si8273 channel A | `Rg`/DUT Gate接口 | Gate能量↔ | 相对`SREF` | P/N快速切换 | inhibited | G2/G3/G11 | `REQ-SYS-FUNC-006`、`REQ-SYS-FUNC-007`、`REQ-SYS-TIME-001`、`REQ-SYS-TIME-002` |
+| IF-GATE-01 | `CAL_GATE_TARGET` | Gate目标协调模块 | `DUT_GATE` | 逻辑目标→ | `SREF` | `MEASUREMENT_I`保证`VGS=VGM-I` | invalid并移交安全目标 | G2/G3/G10/G11 | `REQ-SYS-FUNC-003`、`REQ-SYS-METHOD-001`、`REQ-SYS-METHOD-002`、`REQ-SYS-INTERFACE-006`、`REQ-SYS-INTERFACE-010`、`REQ-SYS-SAFE-001` |
+| IF-DUT-01 | `DUT_GATE` | 获权Gate功能 | DUT Gate | Gate能量↔ | `SREF` | 当前Gate目标 | 安全目标 | G2/G4/G6/G7 | `REQ-SYS-METHOD-001`、`REQ-SYS-METHOD-002`、`REQ-SYS-DUT-005` |
+| IF-DUT-02 | `DUT_SOURCE_SREF` | `DUT_SOURCE/SOURCE_STAR` | driver与`VGS`测量 | 参考/低电流回流↔ | `SREF` | Source端Kelvin式路径 | 受控且不接earth | G4/G6/G7/G11 | `REQ-SYS-INTERFACE-001`、`REQ-SYS-INTERFACE-002`、`REQ-SYS-INTERFACE-004`、`REQ-SYS-MEAS-002` |
+| IF-DUT-03 | `DUT_SOURCE_POWER_RETURN` | `DUT_SOURCE/SOURCE_STAR` | `DRET/VDC return` | 功率电流→ | `DRET`路径 | 漏极功率回流 | drain去能量 | G2/G4/G6/G7/G11 | `REQ-SYS-FUNC-004`、`REQ-SYS-INTERFACE-004`、`REQ-SYS-INTERFACE-007` |
+| IF-DUT-04 | `DUT_DRAIN` | `RL` | DUT Drain | 功率电流→ | 漏极回路 | 接收低能量电流 | de-energized | G2/G4 | `REQ-SYS-FUNC-004`、`REQ-SYS-INTERFACE-007` |
+| IF-DRAIN-01 | `VDC` | 漏极电源 | `RL` | 能量→ | `DRET`回流 | 低`VDS`偏置 | disabled | G2/G10 | `REQ-SYS-METHOD-003`、`REQ-SYS-METHOD-004`、`REQ-SYS-METHOD-005`、`REQ-SYS-INTERFACE-007`、`REQ-SYS-SAFE-003`、`REQ-SYS-SAFE-004` |
+| IF-DRAIN-02 | `RL` | 负载模块 | DUT Drain | 能量→ | `DRET`回流 | 限流并支持`IDS`计算 | 回路disabled | G2/G6/G7 | `REQ-SYS-FUNC-004`、`REQ-SYS-FUNC-005`、`REQ-SYS-MEAS-004` |
+| IF-MEAS-01 | `VGS_GATE_SENSE` | DUT Gate | `VGS`探头 | 测量→ | 与Source sense成对 | `VGS`正端 | 数据无效 | G2/G6/G7/G10 | `REQ-SYS-MEAS-001`、`REQ-SYS-MEAS-002`、`REQ-SYS-MEAS-003`、`REQ-SYS-INTERFACE-009` |
+| IF-MEAS-02 | `VGS_SOURCE_SENSE` | `SOURCE_STAR`局部sense | `VGS`探头 | 测量→ | `SREF` | `VGS`负端 | 不接earth，数据无效 | G2/G6/G7/G10/G11 | `REQ-SYS-MEAS-001`、`REQ-SYS-MEAS-002`、`REQ-SYS-MEAS-003`、`REQ-SYS-INTERFACE-009` |
+| IF-MEAS-03 | `VDS_DRAIN_SENSE` | DUT Drain局部sense | `VDS`探头 | 测量→ | 与Source sense成对 | `VDS`正端 | 仅确认去能量 | G2/G6/G7/G10 | `REQ-SYS-MEAS-001`、`REQ-SYS-MEAS-003`、`REQ-SYS-INTERFACE-009` |
+| IF-MEAS-04 | `VDS_SOURCE_SENSE` | `SOURCE_STAR`局部sense | `VDS`探头 | 测量→ | Source局部参考 | `VDS`负端 | 数据无效 | G2/G6/G7/G10/G11 | `REQ-SYS-MEAS-001`、`REQ-SYS-MEAS-003`、`REQ-SYS-INTERFACE-004`、`REQ-SYS-INTERFACE-009`、`REQ-SYS-VERIFY-001` |
+| IF-DATA-01 | `WAVEFORM_DATA` | 示波器 | 软件 | 数据→ | 数据域 | 波形与时序 | invalid/fault | G10/G11/G12 | `REQ-SYS-MEAS-001`、`REQ-SYS-MEAS-009`、`REQ-SYS-VERIFY-001` |
+| IF-DATA-02 | `B1505_CAL_DATA` | B1505 | 软件 | 数据→ | 数据域 | 曲线、`Ith`、metadata | 不用不匹配数据 | G12 | `REQ-SYS-INTERFACE-008`、`REQ-SYS-MEAS-006`、`REQ-SYS-MEAS-007`、`REQ-SYS-MEAS-008`、`REQ-SYS-MEAS-009` |
+| IF-DATA-03 | `RESULT_DATA` | 软件 | 报告/存储 | 数据→ | 数据域 | `IDS/Vth/ΔVth`审计链 | 不发布合格结论 | G12 | `REQ-SYS-MEAS-004`、`REQ-SYS-MEAS-005`、`REQ-SYS-MEAS-006`、`REQ-SYS-MEAS-007`、`REQ-SYS-MEAS-009`、`REQ-SYS-VERIFY-004` |
+| IF-SAFE-01 | `PROTECTION_INTERLOCK_STATUS` | 检测者/User | 安全协调 | 状态→ | 各源域/隔离接口 | valid/fault组合 | fault锁存 | G2/G10 | `REQ-SYS-SAFE-001`、`REQ-SYS-SAFE-002`、`REQ-SYS-SAFE-003`、`REQ-SYS-SAFE-004` |
+| IF-SAFE-02 | `GATE_POWER_ENABLE_DISABLE` | 安全协调 | rails/driver/Gate协调 | 控制→ | 隔离控制域 | 顺序允许Gate功能 | inhibit | G2/G10 | `REQ-SYS-SAFE-001`、`REQ-SYS-SAFE-002` |
+| IF-SAFE-03 | `DRAIN_POWER_ENABLE_DISABLE` | 安全协调 | `VDC/RL` | 控制→ | 隔离控制域 | Gate和PRECONDITION条件有效后供能 | disable/去能量 | G2/G10 | `REQ-SYS-SAFE-001`、`REQ-SYS-SAFE-002`、`REQ-SYS-SAFE-003` |
+| IF-PROFILE-01 | `DUT_PROFILE_CONFIG` | 受控配置 | 控制/rails/adapter/软件 | 配置→ | 数据/配置域 | 包含三引脚公共Source限制 | invalid禁止arm | G2/G4/G10/G12 | `REQ-SYS-DUT-001`、`REQ-SYS-DUT-002`、`REQ-SYS-DUT-003`、`REQ-SYS-DUT-004`、`REQ-SYS-DUT-005`、`REQ-SYS-SAFE-004` |
 
-## 4. 状态接口约束
+## 4. Calibration Gate接口语义
 
-- `PRECONDITION`：Gate-to-SREF=`0 V`，0 V路径独占；`VIA`不得使`VOA`与其争用。
-- `SAFE_OFF`：Gate为符号化`VGS_SAFE`非应力目标、drain disabled；与PRECONDITION不同。
-- P/N stress→measurement关系严格按第2章；同一DUT/profile切换P/N不得换Base PCB元件、adapter或`Rg`。
-- Calibration的`VIA_CAL`与rail assignment不是P/N表的自然推论，保持受控配置并延期至G2/Master。
-- 0 V路径与`VOA`必须break-before-make；实现拓扑和时间值延期至G2。
-- 任何跨domain连接、connector pinout或instrument earth关系均不得由本候选基线默示建立。
+`STATE_COMMAND=CALIBRATION`请求完成有效PRECONDITION后进入`MEASUREMENT_I`。Gate目标协调模块通过`IF-GATE-01`保证sink=`DUT_GATE`达到相对`SREF`的`VGM-I`逻辑目标。Ready要求profile/control/rails/interlock有效、0 V路径可释放且其他Gate路径可互斥；valid要求目标被接受并验证有效。MI还要求漏极回路与采集条件有效。进入`SAFE_OFF`时接口立即invalid并移交安全目标。
 
-## 5. OPEN状态
+`IF-GATE-01`不选择具体rail、mux、clamp、器件或拓扑；物理实现延期至G2/G3。P/N的`VIA`真值表不得被用来猜测Calibration的物理实现。
 
-`OI-012...017`均已在`G1_system_architecture_v1.0.md`提出resolution proposal，状态统一为：
+## 5. PRECONDITION接口约束
+
+有效顺序为：所有配置和interlock有效→Gate相对`SREF`为0 V并验证→允许`VDC/RL`→验证`VDS=VDC`与漏极回路→开始`tpre`。任何条件失效均使数据无效并进入锁存`SAFE_OFF`；fault后不得自动重启。
+
+## 6. 延期边界
+
+- `VGM-I`的具体rail、mux、clamp、器件与拓扑：G2/G3。
+- connector型号、pin number、Source焊盘和sense落点：G4/G6/G7。
+- 三引脚公共Source阻抗的动态影响：G11。
+- 四引脚Kelvin Source DUT：不属于本基线，未来需重新审核。
 
 **G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW**
 
-本文件在Master批准前不得标记`FROZEN`。
+接口数量：25；唯一接口ID：25；未知canonical REQ ID：0。G1保持`ACTIVE`。
 
