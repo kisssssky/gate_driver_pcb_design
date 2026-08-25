@@ -17,7 +17,7 @@
 - 最终器件选型；
 - 实物封装和Pin 1方向；
 - 关键器件placement；
-- 关键高速走线和Kelvin Source走线；
+- 关键高速走线和三引脚Source端`SREF` Kelvin式参考走线；
 - 实验室电源是否真正浮地/隔离；
 - 示波器探头和接地方式；
 - 实物上电调试；
@@ -116,7 +116,7 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - Si8273隔离栅极驱动；
 - stress→measurement高速切换；
 - 0 V precondition；
-- DUT Gate / Kelvin Source接口；
+- 三引脚DUT Gate/Drain/Source接口，以及从`DUT_SOURCE/SOURCE_STAR`分出的`SREF`与`DRET`功能路径；
 - VDC + RL漏极负载回路；
 - VGS/VDS测量接口；
 - B1505校准流程。
@@ -130,17 +130,17 @@ ChatGPT、GitHub文档。
 - 650 V-class与3.3 kV-class DUT的通用/差异接口边界已定义；
 - SP2和SP3无需猜系统接口即可继续。
 ### 当前状态
-**READY FOR MASTER REVIEW**
+**ACTIVE — READY FOR MASTER REVIEW（返修候选，等待Master复审）**
 
 候选证据：
 
-1. `docs/G1_system_architecture_v1.0.md`定义13个系统模块、7个状态、24个逻辑接口与8幅Mermaid架构/路径图；
+1. `docs/G1_system_architecture_v1.1.md`定义13个系统模块、7个状态、25个唯一逻辑接口与8幅Mermaid架构/路径图；
 2. `docs/interfaces.md`状态为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`，未标记`FROZEN`；
-3. `GNDI/GNDA/SREF/DRET/earth`保持显式区分，P/N rail关系均写成相对`SREF`表达；
-4. Gate、drain和测量回流路径、PCB/外部仪器/B1505/software/User职责均已分配；
+3. DUT只含Gate/Drain/Source三个物理引脚；`SREF`与`DRET`不是隔离域，而是在`DUT_SOURCE/SOURCE_STAR`有意单点汇合并保持功能路径分离；
+4. Gate、drain和测量回流路径、PCB/外部仪器/B1505/software/User职责均已分配；`IF-GATE-01`闭合了`MEASUREMENT_I`的`VGM-I`逻辑目标；
 5. `OI-012...017`形成G1 resolution proposal，但仍等待Master批准，未由G1自行关闭；
 6. 未选择具体器件、数值、connector pinout、保护/0 V拓扑或KiCad实现；
-7. `docs/G1_final_gate_review_v1.0.md`记录A–V全部PASS及远端回读条件。
+7. `docs/G1_final_gate_review_v1.1.md`记录12项返修验收自检、PRECONDITION起算条件及远端回读条件。
 
 该状态不表示G1已经`PASS`或接口已经`FROZEN`；G3继续`BLOCKED`。
 
@@ -273,12 +273,12 @@ ChatGPT根据实际电压、电流、速度提出规则原则；Codex实现已�
 - 其他本地去耦；
 - Rg；
 - DUT Gate connector；
-- DUT Kelvin Source connector。
+- 三引脚DUT Source接口和`SOURCE_STAR`，不得增加未批准的第四个Source参考connector。
 ### 需要学习
 - loop area；
 - parasitic inductance；
 - 去耦回路几何；
-- Kelvin routing；
+- 从`SOURCE_STAR`引出的`SREF` Kelvin式参考routing与`DRET`功率routing；
 - probe access；
 - connector可操作性。
 ### AI负责
@@ -286,9 +286,9 @@ ChatGPT根据PCB截图review回路、回流、隔离和探头空间；Codex只�
 ### 你负责
 关键器件的placement和最终批准。
 ### PASS标准
-- `VOA → Rg → Gate → Kelvin Source → GNDA`物理回路紧凑；
+- `VOA → Rg → Gate → Gate/Source电容 → DUT_SOURCE/SOURCE_STAR → SREF → 已批准rail return`物理回路紧凑；
 - 高频去耦紧贴驱动器供电pin；
-- Kelvin与功率Source物理上可区分；
+- `SREF`与`DRET`在PCB上作为不同功能路径可区分，且只在`SOURCE_STAR`汇合；
 - 探头实际能够接入；
 - 隔离和Connector布局合理。
 ### 当前状态
@@ -301,7 +301,7 @@ ChatGPT根据PCB截图review回路、回流、隔离和探头空间；Codex只�
 按电气重要性顺序走线，而不是按“哪里好走”来走。
 ### 路由优先级
 1. VOA → Rg → DUT Gate
-2. Kelvin Source → driver return
+2. `DUT_SOURCE/SOURCE_STAR → SREF → driver return`
 3. 高频驱动去耦回路
 4. VGS/VDS sense
 5. Power
@@ -311,15 +311,15 @@ ChatGPT根据PCB截图review回路、回流、隔离和探头空间；Codex只�
 - return path；
 - ground/copper plane连续性；
 - via电感；
-- Kelvin sensing；
+- 三引脚Source端Kelvin式sensing；
 - 功率回路与测量回路分离。
 ### AI负责
 ChatGPT逐段截图review；Codex做规则检查和明确的机械修改。
 ### 你负责
-关键高速与Kelvin routing。
+关键高速与三引脚Source端`SREF` Kelvin式routing。
 ### PASS标准
 - 关键回路先完成并通过review；
-- Drain/Power current不共用Kelvin sense路径；
+- Drain功率电流不使用`SREF` sense路径；`SREF`与`DRET`仅在`SOURCE_STAR`汇合；
 - 没有明显断裂的return path；
 - 所有routing满足批准规则。
 ### 当前状态
@@ -399,7 +399,7 @@ Codex跑ERC/DRC、收集warning、检查BOM/footprint/net一致性；ChatGPT做�
 证明PCB真正满足Fig. 3要求，而不仅是“能切换”。
 ### 至少测量
 - VIA或等效控制边沿；
-- 相对Kelvin Source的VGS；
+- 相对三引脚`DUT_SOURCE/SOURCE_STAR` Kelvin式取点的`VGS`；
 - VDS。
 ### 评估
 - transition time；
@@ -469,7 +469,7 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 
 # 当前总进度
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**READY FOR MASTER REVIEW**
+- G1 系统架构：**ACTIVE — READY FOR MASTER REVIEW（返修候选）**
 - G2 器件选型与计算：**NOT STARTED / 可准备datasheet和计算，但不得越过Gate**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
