@@ -21,7 +21,7 @@
 | 9 | 所有REQ追溯均指向现有canonical ID | PASS | 自动提取后与65条canonical ID集合比较，未知ID为0。 |
 | 10 | 没有新增具体器件、数值、pinout或电路拓扑 | PASS | 仅保留符号目标；`VGM-I`物理rail/mux/clamp/器件/拓扑延期至G2/G3。 |
 | 11 | 没有进入KiCad、BOM、placement、routing或stackup | PASS | 本轮只修改`docs/`下Markdown文件；ERC/DRC未涉及。 |
-| 12 | GitHub同步完成并远端回读一致 | PASS（提交后确认） | 最终提交后逐文件回读；回读SHA和内容一致性记录见本文件第5章及最终回复。 |
+| 12 | GitHub同步完成并远端回读一致 | PASS | 8/8个交付文件完整UTF-8内容逐字一致；冻结文件blob SHA未变化。 |
 
 上述PASS仅表示返修自检通过，不是G1阶段门`PASS`。
 
@@ -86,6 +86,8 @@
 
 ## 5. 受控状态与交接
 
+GitHub远端回读：8/8个创建/更新文件与本地候选逐字一致；`docs/requirements.md`和`docs/verification_matrix.md`的blob SHA与返修开始前一致。索引提交：`54d1598cf42f607abc6d408ad1d1d61ee793750e`。
+
 # G1 STATUS: READY FOR MASTER REVIEW；G1 ACTIVE
 
 > 该状态只表示G1返修候选基线具备Master复审条件，不表示G1已经PASS或FROZEN，不表示接口已经FROZEN，不批准任何G2参数或G3电路；G3继续`BLOCKED`。
@@ -104,4 +106,3 @@ HANDOFF_PACKET
 - 下一步：Master复审；批准前不得把G1或interfaces标记为`PASS/FROZEN`
 
 END_HANDOFF_PACKET
-
