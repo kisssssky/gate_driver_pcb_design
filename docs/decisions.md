@@ -1,32 +1,38 @@
-# Decision Log
+# 决策记录
 
-## Approved baseline decisions
-- DEC-001: Use one PCB for both positive and negative BTI.
-- DEC-002: Change BTI polarity only through external VDDA/GNDA voltages and VIA waveform polarity; no PCB component replacement.
-- DEC-003: Define SREF as DUT Kelvin Source reference.
-- DEC-004: Do not assume SREF is laboratory earth.
-- DEC-005: Use Si8273 channel A / VOA for the fast stress-to-measurement transition.
-- DEC-006: Positive BTI uses VDDA = VGS-P, GNDA = VGM-P, VIA HIGH -> LOW at stress end.
-- DEC-007: Negative BTI uses VDDA = VGM-N, GNDA = VGS-N, VIA LOW -> HIGH at stress end.
-- DEC-008: The complete reproduction must include a 0 V precondition state in addition to stress and measurement states.
-- DEC-009: System success is judged by obtaining an interpretable VDS measurement point about 100 ns after stress removal, not by VOA edge speed alone.
-- DEC-010: No manufacturing output before ERC, DRC, manual review, and verification-matrix approval.
-- DEC-011: Every project chat output file must be saved to this GitHub repository before the corresponding task is considered complete.
-- DEC-012: Output files use their canonical engineering location and are registered in `docs/chat_output_index.md`; duplicate archive copies are not required.
-- DEC-013: Non-redistributable source PDFs, credentials, sensitive information, and unapproved large binaries are excluded from direct commits and require an explicit recorded alternative.
-- DEC-014: Master approves `SP1-v0.2 + SP1-FGR-v1.0` as the completed paper-method/system-requirement evidence baseline. SP1 is closed unless a source error is later discovered.
-- DEC-015: SP1 completion does not by itself close G0. G0 remains ACTIVE until project-level acceptance definitions and the canonical requirement baseline are frozen.
-- DEC-016: The platform target includes low-VDS BTI/Vth-hysteresis testing of both 650 V-class and 3.3 kV-class SiC MOSFETs. DUT blocking-voltage rating does not itself require the BTI test PCB to operate at 650 V or 3.3 kV.
-- DEC-017: Master批准`G0-CRB-v1.2`、其中65条`REQ-SYS-*`规范需求、69行SP1/legacy crosswalk及`OPEN::OI-001...022`的延期控制；`OPEN::OI-000`批准并关闭（`APPROVED / RESOLVED`）。`docs/requirements.md`从本决定生效起成为唯一项目级规范需求基线，基线状态为`FROZEN`；G0阶段门状态为`PASS`；G1保持`ACTIVE`，G3保持`BLOCKED`。legacy ID仅保留历史追溯。任何改变冻结需求的ID、技术含义、分类、scope、证据层级或crosswalk，必须经过Master change approval并留下change record。`OPEN::OI-001...022`继续按批准的owner、deadline和Gate关闭。本决定不批准任何具体电路拓扑、器件数值、DUT参数、`Rg`/电容值、0 V实现、保护实现、connector pinout、原理图、PCB或BOM。
+## 已批准基线决策
 
-## Proposed but not yet frozen
-- PROP-001: Use a separate precondition clamp/switch for Gate-to-SREF 0 V state while Si8273 handles only the fast two-level stress/measurement transition.
-- PROP-002: Keep PCB connector labels generic (`VDDA`, `GNDA`, `SREF`) rather than fixed voltage labels such as +18 V or -12 V.
+- DEC-001：使用同一块PCB支持Positive BTI和Negative BTI。
+- DEC-002：BTI极性只通过外部`VDDA/GNDA`电压与`VIA`波形极性切换，不更换PCB元件。
+- DEC-003：定义`SREF`为DUT Kelvin Source reference；其对当前三引脚DUT的受控解释见DEC-018。
+- DEC-004：不得假定`SREF`等于实验室earth。
+- DEC-005：使用Si8273 channel A / `VOA`执行stress-to-measurement快速转换。
+- DEC-006：Positive BTI采用`VDDA=VGS-P`、`GNDA=VGM-P`，stress结束时`VIA HIGH→LOW`。
+- DEC-007：Negative BTI采用`VDDA=VGM-N`、`GNDA=VGS-N`，stress结束时`VIA LOW→HIGH`。
+- DEC-008：完整复现除stress和measurement外还必须包含0 V precondition状态。
+- DEC-009：系统成功标准是在stress移除后约100 ns获得可解释的`VDS`测量点，而不是只看`VOA`边沿速度。
+- DEC-010：ERC、DRC、人工审核和验证矩阵批准前不得发布制造输出。
+- DEC-011：每个项目聊天产生的输出文件必须保存到本GitHub仓库，之后任务才可视为完成。
+- DEC-012：输出文件保存到规范工程路径并登记在`docs/chat_output_index.md`，不要求重复归档副本。
+- DEC-013：不得直接提交不可再分发的PDF、credentials、敏感信息或未批准的大文件；必须记录替代处理方式。
+- DEC-014：Master批准`SP1-v0.2 + SP1-FGR-v1.0`为完成的论文方法/系统需求证据基线。除非发现来源错误，SP1保持关闭。
+- DEC-015：SP1完成不自动关闭G0；在项目级验收定义和canonical requirement baseline冻结前，G0保持`ACTIVE`。
+- DEC-016：平台目标包括650 V-class与3.3 kV-class SiC MOSFET的低`VDS` BTI/`Vth`迟滞测试。DUT额定阻断电压不要求BTI PCB施加650 V或3.3 kV。
+- DEC-017：Master批准`G0-CRB-v1.2`、65条`REQ-SYS-*`规范需求、69行SP1/legacy crosswalk及`OPEN::OI-001...022`延期控制；`OPEN::OI-000`批准并关闭。自本决定生效起，`docs/requirements.md`是唯一项目级规范需求基线，状态`FROZEN`；G0=`PASS`，G1=`ACTIVE`，G3=`BLOCKED`。改变冻结需求ID、技术含义、分类、scope、证据层级或crosswalk必须经过Master change approval。该决定不批准任何具体电路拓扑、器件数值、DUT参数、`Rg`/电容值、0 V实现、保护实现、connector pinout、原理图、PCB或BOM。
+- DEC-018：Master确认当前使用及计划支持的650 V-class和3.3 kV-class SiC MOSFET均为Gate/Drain/Source三引脚器件。当前G1不得把DUT建模为Gate/Kelvin Source/Power Source/Drain四端器件，也不得声称直接支持独立第四个Kelvin Source引脚。`DUT_SOURCE`是唯一Source物理引脚；`SREF`是从该引脚或焊盘处`SOURCE_STAR`引出的Gate回流和`VGS`测量Kelvin式参考路径；`DRET`是从同一`SOURCE_STAR`引出的漏极功率返回路径。两者在`SOURCE_STAR`有意连接，不是相互绝缘的电气域，且不得在更上游再次连接。三引脚封装内部公共Source阻抗必须进入DUT profile、风险登记和G11验证。`REQ-SYS-INTERFACE-001`按三引脚Source端Kelvin式取点解释，`REQ-SYS-INTERFACE-004`按封装不支持独立Kelvin Source时记录限制执行；不修改65条冻结需求。未来四引脚Kelvin Source器件必须重新进行接口和adapter审核，不属于当前G1基线。
 
-## Decision status rules
-- `DEC-*` = approved baseline.
-- `PROP-*` = proposed; may not be treated as frozen by Codex.
-- Any change to `DEC-*` requires master-project approval and corresponding interface/risk review.
-- DEC-011 through DEC-013 were explicitly approved by the Master on 2026-08-24.
-- DEC-014 through DEC-016 were approved during the SP1 Master Review on 2026-08-24.
-- DEC-017于2026-08-25的G0 Master Review和规范基线安装中生效；需求基线状态为`FROZEN`，G0阶段门状态为`PASS`。
+## 尚未冻结的提案
+
+- PROP-001：为Gate-to-`SREF`的0 V precondition提供独立功能路径，同时由Si8273负责P/N两级stress-to-measurement快速转换。具体clamp/switch实现未批准。
+- PROP-002：PCB connector使用通用标签`VDDA`、`GNDA`、`SREF`，不使用固定电压标签。具体connector和pinout未批准。
+
+## 决策状态规则
+
+- `DEC-*`表示已批准基线。
+- `PROP-*`表示提案，Codex不得将其视为冻结。
+- 修改任何`DEC-*`必须经过Master批准，并同步进行接口与风险审核。
+- DEC-011至DEC-013于2026-08-24由Master明确批准。
+- DEC-014至DEC-016于2026-08-24的SP1 Master Review中批准。
+- DEC-017于2026-08-25的G0 Master Review和规范基线安装中生效。
+- DEC-018于2026-08-25的G1 Master返修指令中生效；它是项目范围说明，不是冻结需求变更。
+
