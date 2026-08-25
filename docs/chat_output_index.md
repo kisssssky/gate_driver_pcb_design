@@ -6,6 +6,7 @@
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
+| 2026-08-25 | G0 Correction — 中文可读性与最终追溯修正 | 中文项目摘要、65条规范需求、69行逐项映射、23个OPEN项、自动检查和HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.2.md](G0_closing_requirements_baseline_v1.2.md) | G0-CRB-v1.2 | SYNCED | `G0-CRB-v1.2中文可读性重构与最终追溯修正；READY FOR MASTER REVIEW；未FROZEN；G0未PASS` |
 | 2026-08-24 | G0 Correction — Master Return | G0 canonical requirement baseline correction + exact crosswalk + automated checks + HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.1.md](G0_closing_requirements_baseline_v1.1.md) | G0-CRB-v1.1 | SYNCED | `G0-CRB-v1.1 corrected after Master return; READY FOR MASTER REVIEW; not FROZEN; G0 not PASS` |
 | 2026-08-24 | G0 Closing — Requirement Merge | G0 canonical requirement baseline proposal + Final Gate Review + HANDOFF_PACKET | [G0_closing_requirements_baseline_v1.0.md](G0_closing_requirements_baseline_v1.0.md) | G0-CRB-v1.0 | SYNCED | `G0 STATUS: READY FOR MASTER REVIEW`；65条candidate canonical REQ；未标记FROZEN，未宣告G0 PASS |
 | 2026-08-24 | Master — SP1最终审核 | SP1 Master最终审核 | [SP1_master_review_v1.0.md](SP1_master_review_v1.0.md) | MASTER-SP1-REVIEW-v1.0 | SYNCED | `SP1 MASTER APPROVED / COMPLETE`；G0仍ACTIVE，等待canonical requirements与项目acceptance冻结 |
