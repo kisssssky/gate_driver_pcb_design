@@ -65,6 +65,8 @@ ChatGPT、论文、datasheet、GitHub文档。
 ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Codex只负责在批准后维护文档。
 ### 必须产出
 - `docs/requirements.md`
+- `docs/G0_closing_requirements_baseline_v1.2.md`
+- `docs/G0_master_review_v1.0.md`
 - `docs/SP1_paper_method_system_requirements_v0.2.md`
 - `docs/SP1_final_gate_review_v1.0.md`
 - `docs/SP1_master_review_v1.0.md`
@@ -80,7 +82,22 @@ ChatGPT提取需求、状态、时序、未知项，并编号为`REQ-xxx`；Code
 - 系统级约100 ns测量目标被明确定义；
 - 所有未解决问题明确列出，不靠猜测补全。
 ### 当前状态
-**ACTIVE / SP1 MASTER APPROVED** — `SP1-v0.2 + SP1-FGR-v1.0`已通过Master独立审核，SP1正式关闭。G0本身仍未PASS：还需将SP1的36-ID requirement set正式合并到canonical `docs/requirements.md`，并冻结/分阶段处置`tdly`工程验收、VDS/IDM容差、tpre/tmea、measurement-point算法、安全基线以及650 V/3.3 kV DUT通用接口需求。
+**PASS — canonical requirement baseline FROZEN**
+
+通过证据：
+
+1. `SP1-v0.2 + SP1-FGR-v1.0`已经Master批准；
+2. `G0-CRB-v1.2`已经Master批准，批准记录为`docs/G0_master_review_v1.0.md`；
+3. 65条`REQ-SYS-*`规范需求已安装进`docs/requirements.md`；
+4. `docs/verification_matrix.md`覆盖65/65条需求；
+5. 69行SP1/legacy crosswalk完整，正向和反向追溯均无缺失；
+6. `OPEN::OI-000`已批准并关闭；
+7. `OPEN::OI-001...022`均有owner、deadline和验证方法，并继续按对应Gate关闭；
+8. SREF、同一DUT/profile的P/N切换限制、0 V预处理功能、约100 ns完整系统目标及650 V/3.3 kV低`VDS`边界均已明确；
+9. 安装过程没有通过猜测补入数值、算法、连接器或电路拓扑；
+10. `DEC-017`、GitHub远端回读和状态一致性检查均已完成。
+
+需求基线状态为`FROZEN`；G0阶段门状态为`PASS`。这不表示G1/G2架构、器件参数或电路设计已经完成。
 
 ---
 
@@ -152,7 +169,7 @@ ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化�
 - 负BTI默认状态风险得到处理；
 - 没有阻止原理图实现的关键OPEN问题。
 ### 当前状态
-**NOT STARTED / 可开始准备DUT与Si8273 datasheet，等待G0-G1进一步稳定**
+**NOT STARTED / 可准备DUT与Si8273 datasheet及计算，但不得越过G2阶段门**
 
 ---
 
@@ -181,7 +198,7 @@ ChatGPT逐模块设计和逐pin review；Codex按已批准连接表修改KiCad�
 - 正负BTI满足冻结的接口表；
 - 0 V precondition不与Si8273输出冲突。
 ### 当前状态
-**BLOCKED，直到G0-G2通过**
+**BLOCKED，直到G1和G2通过**
 
 ---
 
@@ -439,9 +456,9 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 ---
 
 # 当前总进度
-- G0 需求定义：**ACTIVE — SP1 MASTER APPROVED；执行canonical requirements合并与项目acceptance收尾**
+- G0 需求定义：**PASS — canonical requirement baseline FROZEN**
 - G1 系统架构：**ACTIVE**
-- G2 器件选型与计算：**NOT STARTED / 可准备datasheet**
+- G2 器件选型与计算：**NOT STARTED / 可准备datasheet和计算，但不得越过Gate**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
 - G5 PCB规则：**BLOCKED**
