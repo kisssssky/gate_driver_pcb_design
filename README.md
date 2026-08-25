@@ -9,6 +9,10 @@
 
 并在stress结束后约100 ns内获得可解释、可重复的VDS测量点，最终用于MI、MP、MN和ΔVth提取。
 
+## 汇报版项目介绍
+- [中文版：项目介绍](docs/project_introduction_zh_v1.0.md)
+- [English version: Project Introduction](docs/project_introduction_en_v1.0.md)
+
 ## 项目级强制规则：聊天输出文件必须同步到 GitHub
 
 本项目每个聊天产生的用户可交付输出文件，必须在任务完成前保存到本仓库，并登记到 [`docs/chat_output_index.md`](docs/chat_output_index.md)。详细范围、路径、例外和完成条件见 [`docs/output_sync_policy.md`](docs/output_sync_policy.md)。
