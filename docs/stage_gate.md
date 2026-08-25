@@ -130,7 +130,19 @@ ChatGPT、GitHub文档。
 - 650 V-class与3.3 kV-class DUT的通用/差异接口边界已定义；
 - SP2和SP3无需猜系统接口即可继续。
 ### 当前状态
-**ACTIVE**
+**READY FOR MASTER REVIEW**
+
+候选证据：
+
+1. `docs/G1_system_architecture_v1.0.md`定义13个系统模块、7个状态、24个逻辑接口与8幅Mermaid架构/路径图；
+2. `docs/interfaces.md`状态为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`，未标记`FROZEN`；
+3. `GNDI/GNDA/SREF/DRET/earth`保持显式区分，P/N rail关系均写成相对`SREF`表达；
+4. Gate、drain和测量回流路径、PCB/外部仪器/B1505/software/User职责均已分配；
+5. `OI-012...017`形成G1 resolution proposal，但仍等待Master批准，未由G1自行关闭；
+6. 未选择具体器件、数值、connector pinout、保护/0 V拓扑或KiCad实现；
+7. `docs/G1_final_gate_review_v1.0.md`记录A–V全部PASS及远端回读条件。
+
+该状态不表示G1已经`PASS`或接口已经`FROZEN`；G3继续`BLOCKED`。
 
 ---
 
@@ -457,7 +469,7 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 
 # 当前总进度
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**ACTIVE**
+- G1 系统架构：**READY FOR MASTER REVIEW**
 - G2 器件选型与计算：**NOT STARTED / 可准备datasheet和计算，但不得越过Gate**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
