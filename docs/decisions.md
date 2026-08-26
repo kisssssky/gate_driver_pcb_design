@@ -21,6 +21,8 @@
 - DEC-017：Master批准`G0-CRB-v1.2`、65条`REQ-SYS-*`规范需求、69行SP1/legacy crosswalk及`OPEN::OI-001...022`延期控制；`OPEN::OI-000`批准并关闭。自本决定生效起，`docs/requirements.md`是唯一项目级规范需求基线，状态`FROZEN`；G0=`PASS`，G1=`ACTIVE`，G3=`BLOCKED`。改变冻结需求ID、技术含义、分类、scope、证据层级或crosswalk必须经过Master change approval。该决定不批准任何具体电路拓扑、器件数值、DUT参数、`Rg`/电容值、0 V实现、保护实现、connector pinout、原理图、PCB或BOM。
 - DEC-018：Master确认当前使用及计划支持的650 V-class和3.3 kV-class SiC MOSFET均为Gate/Drain/Source三引脚器件。当前G1不得把DUT建模为Gate/Kelvin Source/Power Source/Drain四端器件，也不得声称直接支持独立第四个Kelvin Source引脚。`DUT_SOURCE`是唯一Source物理引脚；`SREF`是从该引脚或焊盘处`SOURCE_STAR`引出的Gate回流和`VGS`测量Kelvin式参考路径；`DRET`是从同一`SOURCE_STAR`引出的漏极功率返回路径。两者在`SOURCE_STAR`有意连接，不是相互绝缘的电气域，且不得在更上游再次连接。三引脚封装内部公共Source阻抗必须进入DUT profile、风险登记和G11验证。`REQ-SYS-INTERFACE-001`按三引脚Source端Kelvin式取点解释，`REQ-SYS-INTERFACE-004`按封装不支持独立Kelvin Source时记录限制执行；不修改65条冻结需求。未来四引脚Kelvin Source器件必须重新进行接口和adapter审核，不属于当前G1基线。
 
+- DEC-019：Master于2026-08-26批准`G1-SYS-ARCH-v1.1`、`G1-ICD-v1.1`及`OI-012...017`的G1架构解决方案。G1阶段门状态为`PASS`；`docs/interfaces.md`成为G1逻辑接口唯一冻结基线，状态`FROZEN`；`OI-012...017`标记为`MASTER APPROVED / RESOLVED AT G1`。本批准不选择或冻结具体器件、数值、connector pinout、0 V/保护/Calibration Gate物理拓扑、原理图、PCB、BOM或制造文件。G2正式转为`ACTIVE`；G3继续`BLOCKED`直到G2通过。批准记录为`docs/G1_master_review_v1.0.md`。
+
 ## 尚未冻结的提案
 
 - PROP-001：为Gate-to-`SREF`的0 V precondition提供独立功能路径，同时由Si8273负责P/N两级stress-to-measurement快速转换。具体clamp/switch实现未批准。
@@ -35,4 +37,5 @@
 - DEC-014至DEC-016于2026-08-24的SP1 Master Review中批准。
 - DEC-017于2026-08-25的G0 Master Review和规范基线安装中生效。
 - DEC-018于2026-08-25的G1 Master返修指令中生效；它是项目范围说明，不是冻结需求变更。
+- DEC-019于2026-08-26的G1 Master最终审核中生效；G1=`PASS`，G1接口基线=`FROZEN`，G2=`ACTIVE`，G3=`BLOCKED`。
 
