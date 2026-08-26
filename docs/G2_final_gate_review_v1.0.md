@@ -31,7 +31,7 @@
 | S 假设/未知/用户输入明确 | PASS | 报告各节与本表 | 按HANDOFF逐项关闭 |
 | T 未修改冻结需求/G1接口 | PASS | 仅新增G2文件和状态/风险记录 | remote diff复核 |
 | U 未进入KiCad/G3 | PASS | 无`.kicad_*`、footprint、placement、routing或BOM发布 | 保持G3 BLOCKED |
-| V GitHub同步/远端回读 | PENDING | 在本文件初次提交后执行 | 工程侧完成后更新为PASS |
+| V GitHub同步/远端回读 | PASS | 13个变更文件在分支`g2/component-selection-calculations-v1`逐文件远端回读与本地内容MATCH；draft PR #5 | 合并由用户/Master决定 |
 
 关键FAIL：H、I、K、N、O、P、Q；因此不得宣布G2完成、PASS或READY FOR MASTER REVIEW。
 
@@ -96,3 +96,10 @@ HANDOFF_PACKET:
     - Do not freeze any G2 parameter/topology
     - Do not start KiCad/G3
 ```
+
+## 5. GitHub同步记录
+
+- 分支：`g2/component-selection-calculations-v1`
+- Draft PR：https://github.com/kisssssky/gate_driver_pcb_design/pull/5
+- 初次完整远端回读：13/13文件MATCH
+- `SYNCED`只表示该分支可回读，不表示PR已合并或G2已PASS。
