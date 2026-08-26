@@ -1,0 +1,43 @@
+* G2 state/fault architecture model -- artificial switches, no manufacturer macromodels
+* SCEN: 0 normal sequence, 1 control loss, 2 UVLO, 3 rail fail,
+*       4 Gate contention injection, 5 PRECONDITION only,
+*       6 CALIBRATION only, 7 SAFE_OFF only
+.param SCEN=0 DEAD=5u RPATH=50m RSAFE=4.7 RCAL=47 RFAST=1
+.param Cgate=7.302n VGM=3 VHI=20 VLO=3
+
+* State command test waveform, repeated as a compact deterministic fixture.
+* 0-1ms SAFE, 1-2ms PRECONDITION, 2-3ms CAL, 3-4ms SAFE, 4-5ms FAST, >5ms SAFE.
+BSAFE CSAFE 0 V=if(SCEN==7,5,if(SCEN==5,5,if(SCEN==6,0,if((time<2m)|(time>=3m&time<4m)|(time>=5m),5,0))))
+BCAL CCAL 0 V=if(SCEN==6,5,if((SCEN==0&time>=2m&time<3m)|(SCEN==4&time>=4.10m&time<4.20m),5,0))
+BFAST CFAST 0 V=if((SCEN==0&time>=4m&time<5m)|(SCEN==1&time>=4m&time<4.2m)|(SCEN==2&time>=4m&time<4.2m)|(SCEN==3&time>=4m&time<4.2m)|(SCEN==4&time>=4m&time<4.3m),5,0)
+
+* Artificial control/fault effects.
+BVIA VIA 0 V=if(time<4.5m,5,0)
+BVALID VALID 0 V=if(SCEN==1&time>=4.2m,0,if(SCEN==2&time>=4.2m,0,if(SCEN==3&time>=4.2m,0,5)))
+BVOA VOA SREF V=if(V(VALID)>2.5,if(V(VIA)>2.5,VHI,VLO),VLO)
+VGM_I VGM_I SREF {VGM}
+
+* Two-level path concept. K_SAFE NC action is represented by SSAFE closing on safe command.
+SSAFE GATE SAFE_R CSAFE 0 SWP
+RSAFE_E SAFE_R SREF {RSAFE}
+SCAL GATE CAL_R CCAL 0 SWP
+RCAL_E CAL_R VGM_I {RCAL}
+SFAST GATE FAST_R CFAST 0 SWP
+RFAST_E FAST_R VOA {RFAST}
+.model SWP SW(Ron={RPATH} Roff=1T Vt=2.5 Vh=0.1)
+CGATE GATE SREF {Cgate}
+
+* Drain state is allowed only after PRECONDITION verification and removed on fault.
+BDREN DREN 0 V=if(V(VALID)<2.5,0,if(time>=1.2m&time<5m,5,0))
+VDC VDC 0 10
+SDREN VDC DRAIN DREN 0 SWP
+RLOAD DRAIN 0 100
+RBLEED DRAIN 0 100k
+
+.tran 0 6m 0 100n
+.step param SCEN list 0 1 2 3 4 5 6 7
+.step param DEAD list 2u 5u 10u
+.meas tran VGS_MAX MAX V(GATE,SREF)
+.meas tran VGS_MIN MIN V(GATE,SREF)
+.meas tran ICONT_MAX MAX abs(I(RCAL_E)+I(RFAST_E)+I(RSAFE_E))
+.end

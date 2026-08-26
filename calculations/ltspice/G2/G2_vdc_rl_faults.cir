@@ -1,0 +1,29 @@
+* G2 low-VDS drain loop and fault-energy model
+* FAULT=0 normal DUT switch; FAULT=1 drain-source hard fault at 1us
+.param FAULT=0 VDCVAL=10 RLVAL=100 RDSON=55m Cbus=1u TPULSE=2u TCLEAR=1.2u
+VVDC VSOURCE 0 {VDCVAL}
+SENABLE VSOURCE VSUP CEN 0 SWEN
+.model SWEN SW(Ron=20m Roff=1T Vt=2.5 Vh=0.1)
+RRL VSUP DRAIN {RLVAL}
+CLOCAL VSUP 0 {Cbus}
+BGATE GATE 0 V=if(time<200n,0,10)
+SMOS DRAIN SOURCE GATE 0 SWDUT
+.model SWDUT SW(Ron={RDSON} Roff=1G Vt=3 Vh=0.1)
+VSENSE SOURCE 0 0
+
+* Injected short and fail-open drain relay.
+BFAULT CF 0 V=if(FAULT&time>=1u,5,0)
+SFAULT DRAIN 0 CF 0 SWFAULT
+.model SWFAULT SW(Ron=10m Roff=1T Vt=2.5 Vh=0.1)
+BEN CEN 0 V=if(FAULT&time>=TCLEAR,0,5)
+
+.tran 0 3u 0 1n
+.step param FAULT list 0 1
+*.step param VDCVAL list 5 10 20
+*.step param RLVAL list 10 47 100 470 1k
+*.step param Cbus list 0.1u 1u 10u
+*.step param TCLEAR list 1.05u 1.2u 2u
+.meas tran ID_MAX MAX abs(I(VSENSE))
+.meas tran ISUP_MAX MAX abs(I(VVDC))
+.meas tran E_RL INTEG (I(RRL)*I(RRL)*RLVAL) FROM 0 TO 3u
+.end

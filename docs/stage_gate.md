@@ -182,7 +182,7 @@ ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化�
 - 负BTI默认状态风险得到处理；
 - 没有阻止原理图实现的关键OPEN问题。
 ### 当前状态
-**ACTIVE — 按冻结G1接口开展器件选型、计算与LTspice验证**
+**ACTIVE — datasheet核对、电气计算、DUT profile、候选拓扑和LTspice输入deck已完成；等待用户本地LTspice实跑、B1505目标值与Master批准。Final Gate Review仍有H/I/K/N/O/P/Q FAIL，因此未READY、未PASS。**
 
 ---
 
@@ -471,7 +471,7 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 # 当前总进度
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
 - G1 系统架构：**PASS — G1 interface baseline FROZEN**
-- G2 器件选型与计算：**ACTIVE — 器件选型、计算与LTspice验证**
+- G2 器件选型与计算：**ACTIVE — 工程输入已准备；等待本地LTspice/B1505/Master动作**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
 - G5 PCB规则：**BLOCKED**

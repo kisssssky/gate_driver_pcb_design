@@ -1,6 +1,6 @@
 # 项目状态
 
-版本：v0.9
+版本：v1.0
 当前阶段：G2器件选型与电路计算
 
 - 需求基线状态：**FROZEN — Master approved G0 canonical requirement baseline**
@@ -45,11 +45,15 @@
 - 三引脚封装内部公共Source阻抗已进入DUT profile要求、RISK-007、FMEA与G11验证；未修改冻结需求。
 - Master于2026-08-26批准`G1-SYS-ARCH-v1.1`、25接口ICD和`OI-012...017`；创建`docs/G1_master_review_v1.0.md`并以`DEC-019`记录批准。
 - G1阶段门已安装为`PASS`，G1接口基线已安装为`FROZEN`；G2正式转为`ACTIVE`，G3继续`BLOCKED`。
+- 完成G2输入完整性审核：选定`Si8273AB-IS1`候选；建立`SCTW35N65G2VAG`实物profile和`DUT-PROXY-3K3-G2R50MT33K-3P-v0.1`三引脚代理profile。
+- 完成Gate drive、`Rg`、去耦、rail、`VDC/RL`、故障能量、完整时序与测量链计算；可由`calculations/g2_calculations.py`复算并已通过self-check。
+- 提出`UCC27614DR`同域buffer、monostable relay Gate路径、NC SAFE_OFF与NO drain隔离等`PROP-G2-001...012`候选；均未获Master批准。
+- 创建三个LTspice文本输入deck和14项运行矩阵；因用户本地尚未安装/运行，无`.raw/.log/截图`，不得标记仿真通过。
 
 ## 当前Stage-Gate状态
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
 - G1 系统架构：**PASS — G1 interface baseline FROZEN**
-- G2 器件选型与计算：**ACTIVE — 开始datasheet核对、电气计算与LTspice准备**
+- G2 器件选型与计算：**ACTIVE — 工程输入、计算和LTspice deck已准备；等待本地实跑、B1505目标和Master批准**
 - G3 KiCad原理图：**BLOCKED**
 - G4 Footprint验证：**BLOCKED**
 - G5 PCB规则：**BLOCKED**
@@ -72,27 +76,23 @@
 - SP7：B1505/JEP184校准与数据处理 — 可根据已批准SP1方法基线并行推进算法定义。
 
 ## 当前未解决问题
-1. 650 V-class和3.3 kV-class目标DUT的准确型号、三引脚封装、`Qg`及封装公共Source阻抗验证资料；
-2. 最终VGS-P、VGS-N、VGM-I、VGM-P、VGM-N范围；
-3. 0 V precondition的具体硬件拓扑；
-4. 各目标DUT对应的VDS-C、Ith、VDC和RL设计值；
-5. Pulse Generator、示波器、差分探头的准确型号；
-6. PCB上使用的Si8273完整可订购料号和封装；
-7. LTspice中Si8273是否有可用厂商模型，若没有则采用什么等效模型；
-8. 项目`tdly`精确PASS算法：起点、终点、extremum search、filter、ringing、deskew/de-embedding；
-9. `VDS≈VDS-C`容差、`IDM-P/N`匹配容差、tpre/tmea和self-heating验收条件；
-10. SAFE_OFF、上电/掉电、interlock与protection的具体阈值、延时、器件和实现；
-11. 650 V/3.3 kV三引脚DUT的connector/adapter、`SOURCE_STAR`落点与允许更换`Rg`策略；
-12. 2026-08-24之前历史聊天输出文件的完整回填范围。
+1. 用户本地运行LTspice 14项case并回传log、截图和游标值；
+2. 用户用B1505曲线确认`VDS-C/Ith/VGM-I/P/N/MI/MP/MN`，以便冻结`VDC/RL`；
+3. 用户取得非商业3.3 kV DUT后，以真实内部型号、pin和实测参数替换/收紧代理profile；
+4. 用户在G10/G11对示波器、探头、浮地电源和earth路径作实物资格确认；
+5. Master批准或退回`PROP-G2-001...012`、rail、buffer、relay与profile `Rg`；
+6. Gate-to-rail clamp确切二极管在LTspice/台架峰值和输入电容证据后定料；
+7. 项目`tdly`精确PASS算法及`VDS≈VDS-C`、self-heating容差由G10/G11/G12收敛；
+8. 2026-08-24之前历史聊天输出文件的完整回填范围。
 
 其中`OI-012...017`的G1架构问题已经关闭；其余技术问题继续按对应OPEN项和后续Gate控制。需求与接口基线冻结不表示后续参数、实现或验证已经完成。
 
 ## 当前推荐下一步
-1. 启动G2，完整读取冻结需求、G1架构和接口基线；
-2. 确认Si8273准确料号、650 V/3.3 kV目标DUT、实验室电源和测量仪器；
-3. 完成Gate drive、`Rg`、去耦、0 V precondition、Calibration Gate、`VDC/RL`、保护和时序计算，并给出datasheet依据；
-4. 使用LTspice验证候选实现、寄生影响和故障状态；
-5. G2通过前，G3 KiCad原理图继续`BLOCKED`。
+1. 用户安装LTspice并按`calculations/ltspice/G2/README.md`运行全部case；
+2. 用户提供B1505 calibration曲线/目标值，运行脚本收敛`VDC/RL`；
+3. 工程侧根据真实log/波形更新Final Gate Review并关闭H/I/K/N-Q；
+4. Master审核`PROP-G2-001...012`；
+5. 在上述项目完成前保持`G2 ACTIVE`和`G3 BLOCKED`。
 
 ## 文档语言规则
 面向人的项目文档默认使用中文，以便快速理解；器件Pin名、Net名、文件名、公式变量、标准名称、软件命令和必要的专业缩写保留英文，例如`VDDA`、`GNDA`、`SREF`、`VGS-P`、`VGM-P`、`ERC`、`DRC`。Codex专用的机器约束文件如`AGENTS.md`可以保留英文，以减少执行歧义。

@@ -8,6 +8,7 @@
 
 | 日期 | 子项目/聊天 | 输出文件 | 仓库路径 | 版本 | 同步状态 | 技术状态/说明 |
 |---|---|---|---|---|---|---|
+| 2026-08-26 | G2器件选型、计算与LTspice输入准备 | G2主报告、Final Gate Review、可复算计算、Python脚本及LTspice 14-case运行包 | [G2_component_selection_and_calculation_v1.0.md](G2_component_selection_and_calculation_v1.0.md)；[G2_final_gate_review_v1.0.md](G2_final_gate_review_v1.0.md)；[计算报告](../calculations/G2_electrical_calculations_v1.0.md)；[脚本](../calculations/g2_calculations.py)；[LTspice README](../calculations/ltspice/G2/README.md) | G2-v1.0 | SYNCED | Draft PR #5分支已远端回读；`G2 ACTIVE — NOT READY FOR MASTER REVIEW`；无LTspice真实结果；G3仍BLOCKED |
 | 2026-08-26 | G1 Master最终审核与批准安装 | G1架构/接口Master批准、`OI-012...017`关闭、G1 PASS、接口FROZEN及G2开启记录 | [G1_master_review_v1.0.md](G1_master_review_v1.0.md) | MASTER-G1-REVIEW-v1.0 | SYNCED | `G1 PASS`；G1 interface baseline=`FROZEN`；G2=`ACTIVE`；G3=`BLOCKED`；`DEC-019`生效 |
 | 2026-08-25 | 项目介绍—中文版 | 面向组会、博士阶段汇报、项目评审和技术交流的中文项目介绍 | [project_introduction_zh_v1.0.md](project_introduction_zh_v1.0.md) | PROJECT-INTRO-ZH-v1.0 | SYNCED | 汇报材料；反映G0 PASS、需求基线FROZEN、G1 ACTIVE—READY FOR MASTER REVIEW，不改变任何Gate状态 |
 | 2026-08-25 | Project Introduction—English | English project introduction for presentations and technical reviews | [project_introduction_en_v1.0.md](project_introduction_en_v1.0.md) | PROJECT-INTRO-EN-v1.0 | SYNCED | Presentation material; no electrical behaviour or Stage-Gate status changed |
