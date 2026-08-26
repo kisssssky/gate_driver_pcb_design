@@ -78,7 +78,7 @@
 
 - DATASHEET FACT：`Si8273AB-IS1`，Si8273 HS/LS overlap-protected配置；`A`=5 V UVLO，`B`=2.5 kVrms，`-I`=industrial，`S1`=NB SOIC-16；无`D`表示无integrated deglitch、low-jitter。Ordering Guide p.41。
 - DATASHEET FACT：NB SOIC-16 pin：1 VIA，2 VIB，3/8 VDDI，4 GNDI，5 EN，6/7/12/13 NC，9 GNDB，10 VOB，11 VDDB，14 GNDA，15 VOA，16 VDDA。Table 2 p.3。
-- PROPOSED：Channel A作冻结快速路径；Channel B不使用，VIB经电阻固定LOW，VDDB/GNDB仍按datasheet供电去耦或由Master批准不装。NC保持NC。
+- PROPOSED：Channel A作冻结快速路径；Channel B不使用，VIB经10 kΩ固定LOW；`VDDB=VDDA`、`GNDB=GNDA`并在B引脚旁独立0.1 µF+2.2 µF去耦，VOB不连接。这样B输出处于已供电的确定LOW，而非悬空/欠压状态。NC保持NC。
 
 ### 5.2 供电、逻辑和真值表
 
@@ -192,7 +192,7 @@
 | PROP-G2-008 Gate保护 | 单一G-S TVS难同时容纳+20/−5；rail clamp更符合不对称rails | 预留Gate→VDDA与GNDA的低L Schottky位置、series Rg、rail current limit；确切二极管在LTspice/台架峰值后定 | PROPOSED / exact diode OPEN |
 | PROP-G2-009 `Rg`绑定 | Base固定无法适配负载；可调电阻寄生/误设 | `Rg`装在DUT adapter并由profile ID检查；同profile P/N不变 | PROPOSED |
 | PROP-G2-010 浮地 | 非隔离bench supply可能经PE/USB闭合 | 每个Gate rail输出必须浮地；GNDI/GNDA/SREF/earth无隐式连接；上电前绝缘检查 | PROPOSED |
-| PROP-G2-011 unused B | 浮空输入危险；完整供电增加器件 | VIB 10 kΩ下拉；EN 10 kΩ下拉；VOB不连接；VDDB/GNDB按批准装配策略处理并去耦 | PROPOSED |
+| PROP-G2-011 unused B | 浮空输入或未定义输出供电危险；完整供电增加少量去耦 | VIB/EN各10 kΩ下拉；`VDDB=VDDA`、`GNDB=GNDA`；B侧独立0.1+2.2 µF；VOB不连接 | PROPOSED |
 | PROP-G2-012 power sequence | 同时上电有争用；顺序化可验证 | 见下表；任一步valid失败即回SAFE_OFF且不得自动重启 | PROPOSED |
 
 速度/寄生/器件数权衡：relay只在试验状态间切换，不参加stress→measurement纳秒边沿；FAST状态内K_SAFE/K_SEL保持静态，Si8273+buffer完成边沿。新增buffer和两个relay增加器件数，但将大Gate负载、失电安全与路径互斥从软件假设变为可测试硬件。
