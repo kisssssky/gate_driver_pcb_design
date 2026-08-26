@@ -1,7 +1,7 @@
 # 项目状态
 
-版本：v0.8
-当前阶段：G1系统架构
+版本：v0.9
+当前阶段：G2器件选型与电路计算
 
 - 需求基线状态：**FROZEN — Master approved G0 canonical requirement baseline**
 - G0阶段门状态：**PASS**
@@ -33,21 +33,23 @@
 - 创建`docs/G0_master_review_v1.0.md`，并以`DEC-017`记录批准与变更控制；
 - 将65条需求正式安装进`docs/requirements.md`，需求基线状态为`FROZEN`；
 - 重建`docs/verification_matrix.md`，覆盖65/65条需求，无孤立需求或测试；
-- `OPEN::OI-000`已由Master批准并关闭；`OPEN::OI-001...022`继续按批准的owner、deadline和Gate关闭；
+- `OI-000`已关闭；`OI-012...017`已在G1由Master批准并解决；`OI-001...011`与`OI-018...022`继续按批准的owner、deadline和Gate保持OPEN；
 - 完成G0安装文件的GitHub同步、远端回读和状态一致性检查。
 - `docs/G1_system_architecture_v1.0.md`与`docs/G1_final_gate_review_v1.0.md`为历史候选，已被三引脚返修版v1.1 supersede。
-- `OI-012...017`均形成`G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW`，等待Master批准；未选择器件、数值、connector pinout或具体拓扑。
-- `docs/interfaces.md`更新为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`；接口尚未`FROZEN`。
+- `OI-012...017`的G1架构解决方案已由Master批准并标记为`RESOLVED AT G1`；相关数值、器件、物理拓扑和实物验证继续由后续Gate完成。
+- `docs/interfaces.md`已安装为`FROZEN — MASTER APPROVED G1 INTERFACE BASELINE`。
 - Master审核结论为`CHANGES REQUIRED；G1 ACTIVE`，已按三引脚DUT边界完成G1 v1.1返修。
 - 创建`docs/G1_system_architecture_v1.1.md`与`docs/G1_final_gate_review_v1.1.md`：DUT只保留Gate/Drain/Source三个物理引脚；`SREF`与`DRET`在`DUT_SOURCE/SOURCE_STAR`单点汇合。
 - 新增`IF-GATE-01 / CAL_GATE_TARGET`，由Gate目标协调模块向`DUT_GATE`提供相对`SREF`的`VGM-I`逻辑目标；接口总数重新计算为25。
 - PRECONDITION只有在0 V Gate目标、`VDC/RL`供能、`VDS=VDC`和漏极回路全部验证有效后才开始`tpre`；fault后不得自动重启。
 - 三引脚封装内部公共Source阻抗已进入DUT profile要求、RISK-007、FMEA与G11验证；未修改冻结需求。
+- Master于2026-08-26批准`G1-SYS-ARCH-v1.1`、25接口ICD和`OI-012...017`；创建`docs/G1_master_review_v1.0.md`并以`DEC-019`记录批准。
+- G1阶段门已安装为`PASS`，G1接口基线已安装为`FROZEN`；G2正式转为`ACTIVE`，G3继续`BLOCKED`。
 
 ## 当前Stage-Gate状态
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**ACTIVE — READY FOR MASTER REVIEW（返修候选，等待Master复审）**
-- G2 器件选型与计算：**NOT STARTED / 可开始准备datasheet与DUT参数**
+- G1 系统架构：**PASS — G1 interface baseline FROZEN**
+- G2 器件选型与计算：**ACTIVE — 开始datasheet核对、电气计算与LTspice准备**
 - G3 KiCad原理图：**BLOCKED**
 - G4 Footprint验证：**BLOCKED**
 - G5 PCB规则：**BLOCKED**
@@ -62,8 +64,8 @@
 
 ## 当前子项目
 - SP1：论文方法和系统需求提取 — **MASTER APPROVED / COMPLETE**；后续工程选择不再回填为论文事实；
-- SP2：Si8273栅极驱动、电源架构、0 V precondition与Calibration Gate目标 — v1.1候选接口已明确，可准备G2 datasheet和计算；具体rail、mux、clamp、器件与拓扑仍待Master/G2/G3批准；
-- SP3：VDC/RL漏极负载与测量回路 — 三引脚`SOURCE_STAR/SREF/DRET`候选职责已明确，可准备G2参数计算；具体数值仍待批准；
+- SP2：Si8273栅极驱动、电源架构、0 V precondition与Calibration Gate目标 — **G2 ACTIVE**；按冻结G1接口开展datasheet核对、计算和拓扑候选分析；具体实现仍须在G2批准；
+- SP3：VDC/RL漏极负载与测量回路 — **G2 ACTIVE**；按冻结三引脚`SOURCE_STAR/SREF/DRET`接口开展参数与能量计算；具体数值仍待批准；
 - SP4：KiCad原理图和BOM — 等待G0-G2冻结；
 - SP5：PCB placement/routing — 等待SP4和前置审核；
 - SP6：硬件bring-up与验证 — 等待原型板；
@@ -79,18 +81,18 @@
 7. LTspice中Si8273是否有可用厂商模型，若没有则采用什么等效模型；
 8. 项目`tdly`精确PASS算法：起点、终点、extremum search、filter、ringing、deskew/de-embedding；
 9. `VDS≈VDS-C`容差、`IDM-P/N`匹配容差、tpre/tmea和self-heating验收条件；
-10. SAFE_OFF、上电/掉电顺序、interlock与protection最低要求；
+10. SAFE_OFF、上电/掉电、interlock与protection的具体阈值、延时、器件和实现；
 11. 650 V/3.3 kV三引脚DUT的connector/adapter、`SOURCE_STAR`落点与允许更换`Rg`策略；
 12. 2026-08-24之前历史聊天输出文件的完整回填范围。
 
-上述技术问题均已纳入`OPEN::OI-001...022`控制；需求基线冻结不表示这些后续参数或实现已经确定。
+其中`OI-012...017`的G1架构问题已经关闭；其余技术问题继续按对应OPEN项和后续Gate控制。需求与接口基线冻结不表示后续参数、实现或验证已经完成。
 
 ## 当前推荐下一步
-1. Master复审`G1_system_architecture_v1.1.md`、25接口G1 ICD和`OI-012...017` proposals；
-2. G1在Master批准前不得标记`PASS`或`FROZEN`；
-3. G2可准备Si8273和目标DUT的datasheet核对与计算，所有具体数值必须来自批准的DUT配置档案；
-4. G1与G2均通过之前，G3 KiCad原理图保持`BLOCKED`；
-5. 后续Gate不会因G0或G1候选基线就自动通过。
+1. 启动G2，完整读取冻结需求、G1架构和接口基线；
+2. 确认Si8273准确料号、650 V/3.3 kV目标DUT、实验室电源和测量仪器；
+3. 完成Gate drive、`Rg`、去耦、0 V precondition、Calibration Gate、`VDC/RL`、保护和时序计算，并给出datasheet依据；
+4. 使用LTspice验证候选实现、寄生影响和故障状态；
+5. G2通过前，G3 KiCad原理图继续`BLOCKED`。
 
 ## 文档语言规则
 面向人的项目文档默认使用中文，以便快速理解；器件Pin名、Net名、文件名、公式变量、标准名称、软件命令和必要的专业缩写保留英文，例如`VDDA`、`GNDA`、`SREF`、`VGS-P`、`VGM-P`、`ERC`、`DRC`。Codex专用的机器约束文件如`AGENTS.md`可以保留英文，以减少执行歧义。
