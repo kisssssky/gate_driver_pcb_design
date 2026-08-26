@@ -1,12 +1,12 @@
 # 系统接口控制文件
 
-- 状态：**PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW**
-- G1阶段门：`ACTIVE`
+- 状态：**FROZEN — MASTER APPROVED G1 INTERFACE BASELINE**
+- G1阶段门：`PASS`
 - 版本：`G1-ICD-v1.1`
-- 日期：2026-08-25
+- 日期：2026-08-26
 - 上游需求：65条`REQ-SYS-*`规范需求，状态`FROZEN`
 
-本文件是G1逻辑接口候选基线，不是connector pinout、原理图或PCB netlist。Master批准前不得标记`FROZEN`。
+本文件是Master批准并冻结的G1逻辑接口基线，不是connector pinout、原理图或PCB netlist。批准记录：`docs/G1_master_review_v1.0.md`、`DEC-019`。后续修改必须经过Master变更批准。
 
 ## 1. 三引脚DUT与Source接口规则
 
@@ -94,7 +94,7 @@ Negative BTI：
 - 三引脚公共Source阻抗的动态影响：G11。
 - 四引脚Kelvin Source DUT：不属于本基线，未来需重新审核。
 
-**G1 RESOLUTION PROPOSED — READY FOR MASTER REVIEW**
+**G1 INTERFACE BASELINE: FROZEN — MASTER APPROVED**
 
-接口数量：25；唯一接口ID：25；未知canonical REQ ID：0。G1保持`ACTIVE`。
+接口数量：25；唯一接口ID：25；未知canonical REQ ID：0。G1阶段门=`PASS`；接口基线=`FROZEN`。
 
