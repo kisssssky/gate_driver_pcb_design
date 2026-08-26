@@ -27,6 +27,18 @@
 
 - PROP-001：为Gate-to-`SREF`的0 V precondition提供独立功能路径，同时由Si8273负责P/N两级stress-to-measurement快速转换。具体clamp/switch实现未批准。
 - PROP-002：PCB connector使用通用标签`VDDA`、`GNDA`、`SREF`，不使用固定电压标签。具体connector和pinout未批准。
+- PROP-G2-001：选用`Si8273AB-IS1`（5 V UVLO、low-jitter、NB SOIC-16）作为完整可订购候选。
+- PROP-G2-002：在`VOA`后使用同一`VDDA/GNDA`浮动域的`UCC27614DR`非反相buffer；`VOA`仍承担冻结的P/N快速状态选择。
+- PROP-G2-003：用5 V monostable 2 Form C relay `IM03GR`构成两级Gate路径；失电NC把Gate经`RSAFE`接`SREF`，FAST/CAL选择只在Gate被SAFE路径隔离时改变。
+- PROP-G2-004：650 V候选rails为(+18,+4) V Positive和(+4,−5) V Negative；3.3 kV代理为(+20,+3) V和(+3,−5) V，均相对`SREF`。
+- PROP-G2-005：profile adapter绑定`Rg`，650 V nominal 1.0 Ω、3.3 kV代理nominal 0.5 Ω；同profile P/N不更换，最终值由LTspice/G11批准。
+- PROP-G2-006：每个输出span至少配置0.1 µF+2.2 µF+10 µF本地分层去耦，35 V、105°C等级，MLCC有效容量按DC bias核实。
+- PROP-G2-007：SAFE_OFF由Gate-to-SREF NC硬件路径、Si8273/buffer inhibit、NO drain relay、rail disable与fault latch共同实现；不得只依赖Si8273 LOW。
+- PROP-G2-008：`CAL_GATE_TARGET`由外部浮动精密`VGM-I`源经relay连接Gate；Calibration不经过100 ns FAST边沿。
+- PROP-G2-009：drain路径用bench supply remote inhibit+NO relay+RL+bleeder，fault时先去除drain能量再保持Gate SAFE。
+- PROP-G2-010：Gate-to-rail Schottky clamp仅预留位置，确切料号在LTspice/台架峰值、电容和脉冲电流证据后批准。
+- PROP-G2-011：未使用Channel B的VIB与共享EN均硬件下拉；VOB不连接；VDDB/GNDB装配策略按datasheet和Master决定。
+- PROP-G2-012：上电、掉电、control loss、UVLO和relay切换使用报告第8.1节顺序；relay状态间保留至少5 ms分段等待并验证Gate/rail valid。
 
 ## 决策状态规则
 
