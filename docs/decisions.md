@@ -37,7 +37,7 @@
 - PROP-G2-008：`CAL_GATE_TARGET`由外部浮动精密`VGM-I`源经relay连接Gate；Calibration不经过100 ns FAST边沿。
 - PROP-G2-009：drain路径用bench supply remote inhibit+NO relay+RL+bleeder，fault时先去除drain能量再保持Gate SAFE。
 - PROP-G2-010：Gate-to-rail Schottky clamp仅预留位置，确切料号在LTspice/台架峰值、电容和脉冲电流证据后批准。
-- PROP-G2-011：未使用Channel B的VIB与共享EN均硬件下拉；VOB不连接；VDDB/GNDB装配策略按datasheet和Master决定。
+- PROP-G2-011：未使用Channel B的VIB与共享EN均10 kΩ硬件下拉；`VDDB=VDDA`、`GNDB=GNDA`，B引脚旁独立0.1 µF+2.2 µF去耦；VOB不连接。
 - PROP-G2-012：上电、掉电、control loss、UVLO和relay切换使用报告第8.1节顺序；relay状态间保留至少5 ms分段等待并验证Gate/rail valid。
 
 ## 决策状态规则
@@ -50,4 +50,3 @@
 - DEC-017于2026-08-25的G0 Master Review和规范基线安装中生效。
 - DEC-018于2026-08-25的G1 Master返修指令中生效；它是项目范围说明，不是冻结需求变更。
 - DEC-019于2026-08-26的G1 Master最终审核中生效；G1=`PASS`，G1接口基线=`FROZEN`，G2=`ACTIVE`，G3=`BLOCKED`。
-
