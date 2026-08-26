@@ -47,7 +47,7 @@
 6. **Keysight EasyEXPERT / B1505A**：固定VDS的IDS-VGS基准扫描和校准。
 
 ## 当前阶段
-当前处于：**需求定义 + 系统架构阶段**。
+当前处于：**G2器件选型与电路计算阶段**。G0已`PASS`，需求基线已`FROZEN`，G1已`PASS`且接口基线已`FROZEN`；G3 KiCad原理图继续`BLOCKED`直到G2通过。
 
 详细进度与每一步PASS条件见：`docs/stage_gate.md`。
 
