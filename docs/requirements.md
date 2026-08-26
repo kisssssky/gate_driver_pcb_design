@@ -45,7 +45,7 @@
 | ID | 规范需求 | 类别 | 需求性质 | 来源 | 当前状态 |
 |---|---|---|---|---|---|
 | REQ-SYS-FUNC-001 | 同一块已装配的基础PCB必须同时支持正BTI和负BTI。 | 功能 | PROJECT REQUIREMENT | `DECISION::DEC-001`; `LEGACY::REQ-001` | 已确认（`CONFIRMED`） |
-| REQ-SYS-FUNC-002 | 对同一个DUT和同一份已批准DUT配置档案，P/N模式切换只能改变外部`VDDA/GNDA`和控制波形；不得重新焊接或更换基础PCB元件、DUT转接板或`Rg`。只有更换DUT或更换已批准配置档案时，才可改变DUT专用配置。 | 功能 | PROJECT REQUIREMENT | `DECISION::DEC-001`, `DECISION::DEC-002`; `LEGACY::REQ-002` | 已确认（`CONFIRMED`）；DUT配置边界见`OPEN::OI-015`、`OPEN::OI-016`、`OPEN::OI-017` |
+| REQ-SYS-FUNC-002 | 对同一个DUT和同一份已批准DUT配置档案，P/N模式切换只能改变外部`VDDA/GNDA`和控制波形；不得重新焊接或更换基础PCB元件、DUT转接板或`Rg`。只有更换DUT或更换已批准配置档案时，才可改变DUT专用配置。 | 功能 | PROJECT REQUIREMENT | `DECISION::DEC-001`, `DECISION::DEC-002`; `LEGACY::REQ-002` | 已确认（`CONFIRMED`）；DUT配置边界见`RESOLVED::OI-015`、`RESOLVED::OI-016`、`RESOLVED::OI-017`及`DECISION::DEC-019` |
 | REQ-SYS-FUNC-003 | 系统必须支持三条序列：校准=`PRECONDITION→MEASUREMENT_I`；正应力=`PRECONDITION→POSITIVE_STRESS→MEASUREMENT_P`；负应力=`PRECONDITION→NEGATIVE_STRESS→MEASUREMENT_N`。 | 功能 | PROJECT REQUIREMENT | `SP1::REQ-FUNC-002`（PAPER FACT）；`DECISION::DEC-008` | 已确认（`CONFIRMED`） |
 | REQ-SYS-FUNC-004 | 系统必须支持低能量电阻负载回路：`VDC→RL→DUT Drain→DUT Power Source→return`。 | 功能 | PROJECT REQUIREMENT | `SP1::REQ-FUNC-001`（PAPER FACT）；`LEGACY::REQ-012` | 已确认（`CONFIRMED`） |
 | REQ-SYS-FUNC-005 | 在`MEASUREMENT_I/P/N`状态下，DUT必须处于不完全导通状态，并产生有限且可计算的`IDS`。 | 功能 | PROJECT REQUIREMENT | `SP1::REQ-FUNC-003`（PAPER FACT） | 已确认（`CONFIRMED`）；验收条件延期（`ACCEPTANCE DEFERRED`）至G12 |
@@ -158,9 +158,9 @@
 - 批准人：Master。
 - 批准内容：65条规范需求、69行crosswalk、`OPEN::OI-001...022`的延期控制和正式安装授权。
 
-### 4.2 仍按后续Gate关闭的OPEN项
+### 4.2 OPEN项及已解决项状态
 
-下表逐项保留v1.2批准的owner、deadline、延期理由和验证方法。延期不等于关闭。
+下表保留v1.2批准的owner、deadline、延期理由和验证方法。`OI-012...017`已由G1 Master审核批准并解决；其余项目继续按对应Gate保持OPEN。关闭架构问题不代表后续数值、器件、拓扑或实物验证已经完成。
 
 | OI ID | 尚未决定的问题 | 负责人/阶段 | 最迟决定时间 | 为什么可以延期 | 如何验证 |
 |---|---|---|---|---|---|
@@ -175,12 +175,12 @@
 | OI-009 | 振铃处理和多个局部极值的选择规则 | **延期至G10/G11（`DEFER_TO_G10_G11`）/ SP6与SP7** | G11算法冻结前 | 规则必须基于原型实测波形；G1/G2仍应尽量降低振铃。 | 对合成及实测振铃波形运行算法，并进行人工交叉核对。 |
 | OI-010 | 通道时间校正、电缆延迟和去嵌入规则 | **延期至G10/G11（`DEFER_TO_G10_G11`）/ SP6** | G11仪器资格确认前 | G1只需提供共同时间关系；校正量取决于最终探头和电缆。 | 使用校准夹具或已知边沿验证通道时间校正。 |
 | OI-011 | 自热以及正应力电流/能量上限 | **延期至G2（`DEFER_TO_G2`）/ SP3与DUT负责人** | G2电气范围冻结前 | 上限需要DUT热数据和电气数据；G0已经要求必须设置限制。 | 计算`IDS`、脉冲能量、占空比和温升，并在G10/G11实测验证。 |
-| OI-012 | `SAFE_OFF`的栅极/漏极目标和进入/退出逻辑 | **延期至G1（`DEFER_TO_G1`）/ G1架构负责人** | G1状态/接口冻结前 | 架构必须先定义故障状态，但G0不必选择具体器件或拓扑。 | 审查状态表和FMEA；G10执行故障测试。 |
-| OI-013 | 上电、掉电、控制丢失、UVLO和默认状态流程 | **延期至G1（`DEFER_TO_G1`）/ G1架构负责人** | G1控制/电源接口冻结前 | G1必须先分配模块职责；阈值和器件可在G2确定。 | 审查时序图和FMEA；G10分阶段上电验证。 |
-| OI-014 | 保护功能、0 V预处理争用/互锁及能量限制的职责分配 | **延期至G1（`DEFER_TO_G1`）/ G1架构负责人** | G1安全接口冻结前 | G1必须说明由谁检测和切断；动作值与拓扑不必在G0决定。 | 审查危险分析和接口分配；G2计算，G10做故障测试。 |
-| OI-015 | 650 V/3.3 kV兼容架构和配置边界 | **延期至G1（`DEFER_TO_G1`）/ G1架构负责人** | G1方框图/ICD冻结前 | 低`VDS`和基础架构解耦原则已定；模块边界仍需在方框图中明确。 | 用两类DUT配置逐项演练接口和职责。 |
-| OI-016 | DUT连接器和转接板策略 | **延期至G1（`DEFER_TO_G1`）/ G1接口负责人** | G1 DUT接口冻结前 | 它不改变测试方法，但会影响后续封装适配和回流路径。 | 审查接口控制文件和转接矩阵；G6/G7检查物理实现。 |
-| OI-017 | 是否以及如何允许DUT专用`Rg`更换或选择 | **延期至G1（`DEFER_TO_G1`）/ G1接口负责人** | G1配置策略冻结前；数值在G2决定 | G1必须明确它属于DUT配置，不得把它作为同一DUT正/负模式切换的一部分；具体阻值依赖`Qg`。 | 审查配置规则；G2计算驱动要求；G11检查波形。 |
+| OI-012 | `SAFE_OFF`的栅极/漏极目标和进入/退出逻辑 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1状态/接口冻结前 | 架构必须先定义故障状态，但G0不必选择具体器件或拓扑。 | 审查状态表和FMEA；G10执行故障测试。 |
+| OI-013 | 上电、掉电、控制丢失、UVLO和默认状态流程 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1控制/电源接口冻结前 | G1必须先分配模块职责；阈值和器件可在G2确定。 | 审查时序图和FMEA；G10分阶段上电验证。 |
+| OI-014 | 保护功能、0 V预处理争用/互锁及能量限制的职责分配 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1安全接口冻结前 | G1必须说明由谁检测和切断；动作值与拓扑不必在G0决定。 | 审查危险分析和接口分配；G2计算，G10做故障测试。 |
+| OI-015 | 650 V/3.3 kV兼容架构和配置边界 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1方框图/ICD冻结前 | 低`VDS`和基础架构解耦原则已定；模块边界仍需在方框图中明确。 | 用两类DUT配置逐项演练接口和职责。 |
+| OI-016 | DUT连接器和转接板策略 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1 DUT接口冻结前 | 它不改变测试方法，但会影响后续封装适配和回流路径。 | 审查接口控制文件和转接矩阵；G6/G7检查物理实现。 |
+| OI-017 | 是否以及如何允许DUT专用`Rg`更换或选择 | **MASTER APPROVED / RESOLVED AT G1（DEC-019）** | G1配置策略冻结前；数值在G2决定 | G1必须明确它属于DUT配置，不得把它作为同一DUT正/负模式切换的一部分；具体阻值依赖`Qg`。 | 审查配置规则；G2计算驱动要求；G11检查波形。 |
 | OI-018 | 仪器准确型号、最小带宽、采样率、共模和负载要求 | **延期至G2（`DEFER_TO_G2`）/ 测量负责人** | G2仪器需求冻结前 | 规格应从约100 ns目标和预估边沿、振铃反推；不妨碍G1定义信号接口。 | 建立带宽与误差预算；G10/G11完成仪器资格确认。 |
 | OI-019 | 准确DUT、封装、`Qg/Ciss/Crss`、`VGS/VGM`、`Ith`、`VDS-C`、`VDC/RL`和温度 | **延期至G2（`DEFER_TO_G2`）/ DUT、SP2与SP3负责人** | 对应DUT配置档案在G2冻结前 | 这些都是DUT专用参数；G0只冻结参数类别，不猜具体数值。 | 核对datasheet并完成必要计算；按需进行LTspice或台架验证。 |
 | OI-020 | 探测焊盘、连接器机械条件、Kelvin走线和物理隔离 | **延期至G6/G7（`DEFER_TO_G6_G7`）/ PCB负责人** | 器件放置和布线冻结前 | G1先定义逻辑网络；物理实现依赖封装和层叠。 | 审查器件放置、布线、连通性和寄生影响。 |
