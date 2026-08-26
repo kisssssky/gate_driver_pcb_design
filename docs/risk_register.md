@@ -1,7 +1,7 @@
 # 风险登记册
 
 - 状态：`ACTIVE / OPEN`
-- 更新：2026-08-25，G1三引脚DUT架构返修
+- 更新：2026-08-26，G2器件、计算、三引脚3.3 kV代理与LTspice输入准备
 
 | 风险ID | 风险 | 后果 | G1控制 | 需求追溯 | 后续验证Gate | 状态 |
 |---|---|---|---|---|---|---|
@@ -23,12 +23,18 @@
 | RISK-016 | Scope/probe/chassis建立隐藏earth路径 | `SREF/GNDA`被钳位、短路或测量失真 | earth连接受控；差分探头共模与机壳资格确认 | `REQ-SYS-INTERFACE-002`、`REQ-SYS-INTERFACE-003`、`REQ-SYS-INTERFACE-009`、`REQ-SYS-MEAS-002`、`REQ-SYS-MEAS-003` | G2/G10 | Open |
 | RISK-017 | Calibration Gate逻辑责任不完整或ready/valid误用 | `MEASUREMENT_I`未达到`VGM-I`却被标为有效 | `IF-GATE-01`指定模块5、sink/reference、互斥、ready/valid与`SAFE_OFF` | `REQ-SYS-FUNC-003`、`REQ-SYS-INTERFACE-006`、`REQ-SYS-INTERFACE-010`、`REQ-SYS-SAFE-001` | G2/G3/G10/G11 | Open |
 | RISK-018 | 在`VDS=VDC`建立前错误起算`tpre` | PRECONDITION无效、初始状态不可比 | 八步PRECONDITION顺序；条件失效即数据invalid和`SAFE_OFF` | `REQ-SYS-FUNC-003`、`REQ-SYS-METHOD-001`、`REQ-SYS-TIME-003`、`REQ-SYS-SAFE-001` | G10/G12 | Open |
+| RISK-019 | 非商业3.3 kV三引脚DUT与`G2R50MT33K`代理不一致 | Gate负载、热行为和100 ns结论失真 | 代理ID显式隔离；`Qg/C/Lcs`范围扫描；禁止宣称实际器件资格 | `REQ-SYS-DUT-001`、`REQ-SYS-DUT-004`、`REQ-SYS-VERIFY-004` | G2/G10/G11 | Open |
+| RISK-020 | `SCTW35N65G2VAG`已obsolete/out of production | 备件、批次一致性和复现实验受限 | 记录实物批次；建立替代料前重新执行DUT profile审核 | `REQ-SYS-DUT-001`、`REQ-SYS-DUT-004` | G2/G4/G10 | Open |
+| RISK-021 | 3.3 kV大Gate负载使约100 ns系统目标无法满足worst case | MI/MN点延迟且不可比较 | 同域高电流buffer候选；0.22–4.7 Ω、C/Q、寄生扫描；G11以VDS有效点验收 | `REQ-SYS-TIME-001`、`REQ-SYS-TIME-002`、`REQ-SYS-VERIFY-001` | G2/G11 | Open |
+| RISK-022 | Gate路径relay回跳、粘连或时序不足 | 0 V/CAL/FAST争用或错误Gate目标 | monostable NC SAFE_OFF；≥5 ms分段等待；状态反馈与Gate valid；故障锁存 | `REQ-SYS-INTERFACE-010`、`REQ-SYS-SAFE-001`、`REQ-SYS-SAFE-003` | G2/G3/G10 | Open |
+| RISK-023 | 保护clamp过早导通、寄生过大或rail失效时反灌 | Gate波形失真或保护失效 | 先以LTspice/台架确定峰值和电容预算，再定确切Schottky；rail限流与bleeder | `REQ-SYS-SAFE-003`、`REQ-SYS-SAFE-004` | G2/G3/G10/G11 | Open |
 
 ## 状态说明
 
 - 本轮没有关闭或退役风险。
 - RISK-007已从“Kelvin Source/Power Source可能共阻抗”改为当前三引脚DUT的确定性封装限制。
 - 新增RISK-012、RISK-013、RISK-017、RISK-018，用于覆盖单点汇合、sense落点、Calibration Gate目标和PRECONDITION计时。
+- G2新增RISK-019...023：3.3 kV代理误差、650 V器件生命周期、100 ns worst-case、relay路径与Gate clamp。
 - 详细14项简化FMEA见`docs/G1_system_architecture_v1.1.md`第10章。
 - 未编造发生率、严重度或定量风险等级。
 
