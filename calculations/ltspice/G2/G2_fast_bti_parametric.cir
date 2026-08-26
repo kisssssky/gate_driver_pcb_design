@@ -1,0 +1,72 @@
+* G2 fast BTI architecture/sensitivity model -- NOT a manufacturer device model
+* PROFILE: 0=SCTW35N65G2VAG equivalent, 1=3.3kV 3-pin proxy
+* POL: 1=Positive stress(high)->measurement(low), 0=Negative stress(low)->measurement(high)
+.param PROFILE=0 POL=1
+.param Rg=1 Rloop=0.2 Lgate=10n Lcs=5n Rcs=20m
+.param Rsrc=2.5 Rsink=0.34 TISO=30n TBUF=17.5n
+.param RailTol=0 Cscale=1 Cdec=10u ESR=20m ESL=1n
+.param VDCVAL=10 RLVAL=100 VTH650=3.2 VTH3K3=2.75
+.param CISS650=1.37n CISS3K3=7.302n CRSS650=30p CRSS3K3=12.3p
+.param COSS650=125p COSS3K3=131p RINT650=2 RINT3K3=1.2 RDS650=55m RDS3K3=50m
+.param TSTEP=200n
+
+* Floating rails referred only to SREF.
+BHI VDDA SREF V=(1+RailTol)*if(PROFILE,if(POL,20,3),if(POL,18,4))
+BLO GNDA SREF V=(1+RailTol)*if(PROFILE,if(POL,3,-5),if(POL,4,-5))
+CDEC_H VDDA SREF {Cdec} Rser={ESR} Lser={ESL}
+CDEC_L GNDA SREF {Cdec} Rser={ESR} Lser={ESL}
+
+* VIA and two cascaded behavioral propagation delays (Si8273 + optional buffer).
+BVIA VIA 0 V=if(time<TSTEP,if(POL,3.3,0),if(POL,0,3.3))
+BCMD VOA 0 V=delay(V(VIA),TISO)
+BBUF CTRL 0 V=delay(V(VOA),TBUF)
+BCTRLN CTRLN 0 V=3.3-V(CTRL)
+
+* Rail-to-rail output stage. Rsrc/Rsink are sweep parameters.
+SOUTH VO_RAW VDDA CTRL 0 SWUP
+SOUTL VO_RAW GNDA CTRLN 0 SWDN
+.model SWUP SW(Ron={Rsrc} Roff=1G Vt=1.65 Vh=0.05)
+.model SWDN SW(Ron={Rsink} Roff=1G Vt=1.65 Vh=0.05)
+
+* Adapter Gate path and explicit current sense source.
+VIG VO_RAW GL0 0
+LGATE GL0 GL1 {Lgate}
+RLOOP GL1 GL2 {Rloop}
+RGEXT GL2 GL3 {Rg}
+RGINT GL3 GATE {if(PROFILE,RINT3K3,RINT650)}
+
+* Three-terminal equivalent DUT. SRCINT is before common-source parasitics.
+CGS GATE SRCINT {Cscale*if(PROFILE,CISS3K3-CRSS3K3,CISS650-CRSS650)}
+CGD GATE DRAIN {Cscale*if(PROFILE,CRSS3K3,CRSS650)}
+CDS DRAIN SRCINT {Cscale*if(PROFILE,COSS3K3,COSS650)}
+SMOS DRAIN SRCINT GATE SRCINT SWDUT
+.model SWDUT SW(Ron={if(PROFILE,RDS3K3,RDS650)} Roff=1G Vt={if(PROFILE,VTH3K3,VTH650)} Vh=50m)
+LCS SRCINT SRCR {Lcs}
+RCS SRCR SOURCE_STAR {Rcs}
+VRET SOURCE_STAR DRET 0
+
+* Low-VDS drain measurement loop.
+VVDC VDC DRET {VDCVAL}
+RLOAD VDC DRAIN {RLVAL}
+
+.tran 0 600n 0 100p
+.step param PROFILE list 0 1
+.step param POL list 0 1
+*.step param Rg list 0.22 0.5 1 2.2 4.7 10
+*.step param Cscale list 0.7 1 1.5 2
+*.step param Lgate list 2n 5n 10n 20n 30n
+*.step param Lcs list 1n 5n 10n 20n
+*.step param RailTol list -0.05 0 0.05
+*.step param Rsrc list 2.5 4.5
+*.step param Rsink list 0.34 0.55
+*.step param Cdec list 1u 2.2u 10u
+*.step param ESR list 5m 20m 100m
+*.step param ESL list 0.3n 1n 3n
+
+.meas tran VGS_MAX MAX V(GATE,SRCINT)
+.meas tran VGS_MIN MIN V(GATE,SRCINT)
+.meas tran IG_MAX MAX abs(I(VIG))
+.meas tran ID_MAX MAX abs(I(VVDC))
+.meas tran VDROOP_H PP V(VDDA,SREF) FROM 150n TO 500n
+.meas tran VDROOP_L PP V(GNDA,SREF) FROM 150n TO 500n
+.end
