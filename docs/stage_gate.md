@@ -130,19 +130,20 @@ ChatGPT、GitHub文档。
 - 650 V-class与3.3 kV-class DUT的通用/差异接口边界已定义；
 - SP2和SP3无需猜系统接口即可继续。
 ### 当前状态
-**ACTIVE — READY FOR MASTER REVIEW（返修候选，等待Master复审）**
+**PASS — G1 INTERFACE BASELINE FROZEN**
 
-候选证据：
+通过证据：
 
-1. `docs/G1_system_architecture_v1.1.md`定义13个系统模块、7个状态、25个唯一逻辑接口与8幅Mermaid架构/路径图；
-2. `docs/interfaces.md`状态为`PROPOSED G1 INTERFACE BASELINE — READY FOR MASTER REVIEW`，未标记`FROZEN`；
-3. DUT只含Gate/Drain/Source三个物理引脚；`SREF`与`DRET`不是隔离域，而是在`DUT_SOURCE/SOURCE_STAR`有意单点汇合并保持功能路径分离；
-4. Gate、drain和测量回流路径、PCB/外部仪器/B1505/software/User职责均已分配；`IF-GATE-01`闭合了`MEASUREMENT_I`的`VGM-I`逻辑目标；
-5. `OI-012...017`形成G1 resolution proposal，但仍等待Master批准，未由G1自行关闭；
-6. 未选择具体器件、数值、connector pinout、保护/0 V拓扑或KiCad实现；
-7. `docs/G1_final_gate_review_v1.1.md`记录12项返修验收自检、PRECONDITION起算条件及远端回读条件。
+1. Master审核记录：`docs/G1_master_review_v1.0.md`；批准决策：`DEC-019`；
+2. `docs/G1_system_architecture_v1.1.md`定义13个系统模块、7个状态、25个唯一逻辑接口与8幅Mermaid架构/路径图；
+3. `docs/interfaces.md`已安装为G1唯一逻辑接口冻结基线，状态`FROZEN`；
+4. DUT只含Gate/Drain/Source三个物理引脚；`SREF`与`DRET`在`DUT_SOURCE/SOURCE_STAR`有意单点汇合并保持功能路径分离；
+5. Gate、drain和测量回流路径及各系统责任已分配；`IF-GATE-01`闭合了`MEASUREMENT_I`的`VGM-I`逻辑目标；
+6. PRECONDITION起算顺序、`SAFE_OFF`、上电/掉电、失控和互锁职责均已定义到G1层；
+7. `OI-012...017`已由Master批准并标记为`RESOLVED AT G1`；
+8. 未选择具体器件、数值、connector pinout、保护/0 V物理拓扑或KiCad实现。
 
-该状态不表示G1已经`PASS`或接口已经`FROZEN`；G3继续`BLOCKED`。
+G1阶段门=`PASS`；G1接口基线=`FROZEN`。这不表示G2参数或G3电路已经批准；G3继续`BLOCKED`。
 
 ---
 
@@ -181,7 +182,7 @@ ChatGPT做datasheet review、计算、失效状态分析和LTspice模型简化�
 - 负BTI默认状态风险得到处理；
 - 没有阻止原理图实现的关键OPEN问题。
 ### 当前状态
-**NOT STARTED / 可准备DUT与Si8273 datasheet及计算，但不得越过G2阶段门**
+**ACTIVE — 按冻结G1接口开展器件选型、计算与LTspice验证**
 
 ---
 
@@ -469,8 +470,8 @@ ChatGPT做根因分析和改版方案；Codex维护change list、KiCad确定性�
 
 # 当前总进度
 - G0 需求定义：**PASS — canonical requirement baseline FROZEN**
-- G1 系统架构：**ACTIVE — READY FOR MASTER REVIEW（返修候选）**
-- G2 器件选型与计算：**NOT STARTED / 可准备datasheet和计算，但不得越过Gate**
+- G1 系统架构：**PASS — G1 interface baseline FROZEN**
+- G2 器件选型与计算：**ACTIVE — 器件选型、计算与LTspice验证**
 - G3 原理图：**BLOCKED**
 - G4 Footprint：**BLOCKED**
 - G5 PCB规则：**BLOCKED**
